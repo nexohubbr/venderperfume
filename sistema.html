@@ -12,6 +12,7 @@
     --border-light: #3d3528; --text: #f5f0e8; --muted: #9a9080;
     --accent: #c9a961; --accent-2: #e0c882; --accent-dark: #8b7340;
     --ok: #34d399; --danger: #ef4444; --info: #3b82f6; --warning: #f59e0b;
+    --purple: #a78bfa;
   }
   html { scroll-behavior: smooth; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
@@ -70,6 +71,7 @@
   /* CARDS & STATS */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
   .card h2 { font-family: 'Playfair Display', serif; color: var(--accent); margin-bottom: 16px; font-size: 22px; }
+  .card h3 { font-family: 'Playfair Display', serif; color: var(--accent); margin-bottom: 12px; font-size: 18px; }
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
   .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
   .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
@@ -146,6 +148,7 @@
   .summary-row.total .val { color: var(--ok); font-size: 18px; font-weight: 700; }
   .summary-row.profit .val { color: var(--accent); }
   .summary-row.atacado .val { color: var(--warning); font-weight: 700; }
+  .summary-row.prolabore .val { color: var(--purple); font-weight: 700; }
 
   /* PRODUCT SELECT LIST */
   .product-select-list { max-height: 300px; overflow-y: auto; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; margin-top: 8px; }
@@ -223,7 +226,7 @@
 
 <!-- TABS -->
 <div class="tabs no-print" id="app-tabs" style="display:none;">
-  <div class="tab active" data-section="venda" data-role="all">💰 Nova Venda</div>
+  <div class="tab active" data-section="venda" data-role="all"> Nova Venda</div>
   <div class="tab" data-section="minhas-vendas" data-role="all">📋 Minhas Vendas</div>
   <div class="tab" data-section="catalogo" data-role="admin">📚 Catálogo (Imprimir)</div>
   <div class="tab" data-section="vendas" data-role="admin">📊 Todas as Vendas</div>
@@ -273,7 +276,7 @@
             <select id="venda-pagamento" required>
               <option value="vista">💵 À Vista</option>
               <option value="pix">📱 Pix</option>
-              <option value="boleto">📄 Boleto</option>
+              <option value="boleto"> Boleto</option>
               <option value="fiado">📒 Fiado</option>
             </select>
           </div>
@@ -437,7 +440,7 @@
         <div class="form-group"><label>Custo do Produto (R$)</label><input type="number" id="calc-custo" step="0.01"></div>
         <div class="form-group"><label>Quantidade no Pedido</label><input type="number" id="calc-qtd" value="10" min="1"></div>
         <div class="form-group"><label>Frete Total (R$)</label><input type="number" id="calc-frete" value="80" step="0.01"></div>
-        <div class="form-group"><label>Margem de Lucro (%)</label><input type="number" id="calc-margem" value="50" step="0.1"></div>
+        <div class="form-group"><label>Margem de Lucro (%)</label><input type="number" id="calc-margem" value="90" step="0.1"></div>
       </div>
       <button class="btn btn-primary btn-block" style="margin-top: 16px;" onclick="calcularPrecoCalc()">Calcular</button>
       <div class="summary-box" id="calc-resultado" style="display:none; margin-top: 16px;"></div>
@@ -529,7 +532,7 @@
       <button class="btn btn-info" onclick="exportarDados()">📥 Exportar Backup</button>
       <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">📤 Importar Backup</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importarDados(event)">
-      <button class="btn btn-danger" onclick="limparTudo()">🗑️ Limpar Tudo</button>
+      <button class="btn btn-danger" onclick="limparTudo()">️ Limpar Tudo</button>
     </div>
   </div>
 
@@ -658,7 +661,7 @@ function formatShortDate(d) { return new Date(d).toLocaleDateString('pt-BR'); }
 // ================= CÁLCULO DE PREÇO =================
 function calcularPreco(produto, qtd=1) {
   const margem = config.margens[produto.cat] || 50;
-  const freteUnit = config.frete / Math.max(qtd, 10); // Rateio baseado no mínimo de 10
+  const freteUnit = config.frete / Math.max(qtd, 10);
   const custoTotal = produto.custo + freteUnit;
   const precoVarejo = custoTotal * (1 + margem / 100);
   
@@ -689,7 +692,6 @@ function fazerLogin() {
     document.getElementById('app-tabs').style.display = 'flex';
     document.getElementById('user-display-name').textContent = user.name + (user.role === 'admin' ? ' (Admin)' : ' (Vendedor)');
     
-    // Configurar select de vendedores na tela de venda
     const selVend = document.getElementById('venda-vendedor');
     selVend.innerHTML = '';
     if (user.role === 'admin') {
@@ -700,7 +702,6 @@ function fazerLogin() {
       selVend.innerHTML = `<option value="${user.name.split(' ')[0]}" selected>${user.name}</option>`;
     }
     
-    // Mostrar/esconder tabs
     document.querySelectorAll('.tab').forEach(tab => {
       if (tab.dataset.role === 'admin' && user.role !== 'admin') {
         tab.style.display = 'none';
@@ -709,13 +710,7 @@ function fazerLogin() {
       }
     });
     
-    // Ir para aba permitida
-    if (user.role === 'vendedor') {
-      document.querySelector('.tab[data-section="venda"]').click();
-    } else {
-      document.querySelector('.tab[data-section="venda"]').click();
-    }
-    
+    document.querySelector('.tab[data-section="venda"]').click();
     renderCatalogoLista();
   } else {
     showToast('Usuário ou senha incorretos', true);
@@ -901,7 +896,7 @@ function renderCatalogoLista() {
   const filtered = cat === 'todos' ? produtosBase : produtosBase.filter(p => p.cat === cat);
   
   document.getElementById('catalogo-lista').innerHTML = filtered.map(p => {
-    const calc = calcularPreco(p, config.minAtacado); // Base para mostrar preço
+    const calc = calcularPreco(p, config.minAtacado);
     let precoMostrar = calc.precoVarejo;
     if (tipo === 'atacado1') precoMostrar = calc.precoVarejo * (1 - config.atacado.f1/100);
     if (tipo === 'atacado2') precoMostrar = calc.precoVarejo * (1 - config.atacado.f2/100);
@@ -940,15 +935,25 @@ function imprimirCatalogo() {
   document.getElementById('print-subtitle').textContent = `Tabela de Preços: ${tipoLabel} • ${checks.length} produtos selecionados`;
   document.getElementById('print-data').textContent = new Date().toLocaleString('pt-BR');
   
-  let html = '<div class="table-container"><table><thead><tr><th>Produto</th><th>Referência</th><th>Volume</th><th>Público</th><th>Preço</th></tr></thead><tbody>';
+  let html = '<div class="table-container"><table><thead><tr><th>Produto</th><th>Referência</th><th>Volume</th><th>Público</th><th>Preço</th><th>Recompra</th><th>Correios</th><th>Lucro</th><th>%</th></tr></thead><tbody>';
   checks.forEach(c => {
     const p = produtosBase.find(x => x.id === c.dataset.id);
+    const precoVenda = parseFloat(c.dataset.preco);
+    const freteUnit = config.frete / config.minAtacado;
+    const custoTotal = p.custo + freteUnit;
+    const lucro = precoVenda - custoTotal;
+    const margem = ((lucro / custoTotal) * 100).toFixed(1);
+    
     html += `<tr>
       <td><strong>${p.nome}</strong></td>
       <td>${p.ref}</td>
       <td>${p.vol}</td>
       <td>${p.publico}</td>
-      <td style="font-weight:700;color:#000;">${formatMoney(parseFloat(c.dataset.preco))}</td>
+      <td style="font-weight:700;color:#000;">${formatMoney(precoVenda)}</td>
+      <td>${formatMoney(p.custo)}</td>
+      <td>${formatMoney(freteUnit)}</td>
+      <td style="color:#00aa00;font-weight:600;">${formatMoney(lucro)}</td>
+      <td>${margem}%</td>
     </tr>`;
   });
   html += '</tbody></table></div>';
@@ -1095,24 +1100,46 @@ function calcularPrecoCalc() {
   const freteUnit = frete / Math.max(qtd, 10);
   const custoTotal = custoUnit + freteUnit;
   const precoVarejo = custoTotal * (1 + margem / 100);
+  const lucroVarejo = precoVarejo - custoTotal;
+  const margemPct = ((lucroVarejo / custoTotal) * 100).toFixed(1);
   
   let html = `
     <div class="summary-row"><span class="lbl">Custo do produto</span><span class="val">${formatMoney(custoUnit)}</span></div>
     <div class="summary-row"><span class="lbl">Frete rateado por unidade</span><span class="val">${formatMoney(freteUnit)}</span></div>
     <div class="summary-row"><span class="lbl">Custo total unitário</span><span class="val">${formatMoney(custoTotal)}</span></div>
-    <div class="summary-row"><span class="lbl">Preço de Varejo sugerido</span><span class="val" style="color: var(--ok);">${formatMoney(precoVarejo)}</span></div>
+    <div class="summary-row"><span class="lbl">Gasto para recomprar</span><span class="val">${formatMoney(custoUnit)}</span></div>
+    <div class="summary-row total"><span class="lbl">Preço de Varejo sugerido</span><span class="val">${formatMoney(precoVarejo)}</span></div>
+    <div class="summary-row profit"><span class="lbl">Lucro por unidade</span><span class="val">${formatMoney(lucroVarejo)} (${margemPct}%)</span></div>
   `;
   
   if (qtd >= config.minAtacado) {
     const p1 = precoVarejo * (1 - config.atacado.f1/100);
     const p2 = precoVarejo * (1 - config.atacado.f2/100);
     const p3 = precoVarejo * (1 - config.atacado.f3/100);
+    const l1 = p1 - custoTotal;
+    const l2 = p2 - custoTotal;
+    const l3 = p3 - custoTotal;
+    const m1 = ((l1/custoTotal)*100).toFixed(1);
+    const m2 = ((l2/custoTotal)*100).toFixed(1);
+    const m3 = ((l3/custoTotal)*100).toFixed(1);
+    
     html += `
-      <div class="summary-row atacado"><span class="lbl">Atacado Faixa 1 (${config.atacado.f1}% off)</span><span class="val">${formatMoney(p1)}</span></div>
-      <div class="summary-row atacado"><span class="lbl">Atacado Faixa 2 (${config.atacado.f2}% off)</span><span class="val">${formatMoney(p2)}</span></div>
-      <div class="summary-row atacado"><span class="lbl">Atacado Faixa 3 (${config.atacado.f3}% off)</span><span class="val">${formatMoney(p3)}</span></div>
+      <div class="summary-row atacado"><span class="lbl">Atacado Faixa 1 (${config.atacado.f1}% off)</span><span class="val">${formatMoney(p1)} (Lucro: ${formatMoney(l1)} - ${m1}%)</span></div>
+      <div class="summary-row atacado"><span class="lbl">Atacado Faixa 2 (${config.atacado.f2}% off)</span><span class="val">${formatMoney(p2)} (Lucro: ${formatMoney(l2)} - ${m2}%)</span></div>
+      <div class="summary-row atacado"><span class="lbl">Atacado Faixa 3 (${config.atacado.f3}% off)</span><span class="val">${formatMoney(p3)} (Lucro: ${formatMoney(l3)} - ${m3}%)</span></div>
     `;
   }
+  
+  // Pró-labore
+  html += `
+    <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border);">
+      <h3 style="margin-bottom: 12px;">💰 Pró-labore por Vendedor (sobre lucro de ${formatMoney(lucroVarejo)})</h3>
+      <div class="summary-row prolabore"><span class="lbl">Luciano (Pai) - ${config.comissoes['Luciano']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Luciano']/100)}</span></div>
+      <div class="summary-row prolabore"><span class="lbl">Verônica (Mãe) - ${config.comissoes['Verônica']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Verônica']/100)}</span></div>
+      <div class="summary-row prolabore"><span class="lbl">Luciano Junior - ${config.comissoes['Luciano Junior']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Luciano Junior']/100)}</span></div>
+      <div class="summary-row prolabore"><span class="lbl">Alexandre - ${config.comissoes['Alexandre']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Alexandre']/100)}</span></div>
+    </div>
+  `;
   
   document.getElementById('calc-resultado').innerHTML = html;
   document.getElementById('calc-resultado').style.display = 'block';
@@ -1161,9 +1188,9 @@ function gerarRelatorio() {
     html += '</tbody></table></div></div>';
   }
   
-  html += '<div class="card print-active"><h3>📋 Detalhamento das Vendas</h3><div class="table-container"><table><thead><tr><th>Data</th><th>Produto</th><th>Cliente</th><th>Vendedor</th><th>Qtd</th><th>Total</th><th>Lucro</th></tr></thead><tbody>';
+  html += '<div class="card print-active"><h3>📋 Detalhamento das Vendas</h3><div class="table-container"><table><thead><tr><th>Data</th><th>Produto</th><th>Cliente</th><th>Vendedor</th><th>Qtd</th><th>Total</th><th>Lucro</th><th>Pró-labore</th></tr></thead><tbody>';
   filtered.slice().reverse().forEach(v => {
-    html += `<tr><td>${formatShortDate(v.data)}</td><td>${v.produto}</td><td>${v.cliente}</td><td>${v.vendedor}</td><td>${v.qtd}</td><td>${formatMoney(v.total)}</td><td style="color: var(--ok);">${formatMoney(v.lucroTotal)}</td></tr>`;
+    html += `<tr><td>${formatShortDate(v.data)}</td><td>${v.produto}</td><td>${v.cliente}</td><td>${v.vendedor}</td><td>${v.qtd}</td><td>${formatMoney(v.total)}</td><td style="color: var(--ok);">${formatMoney(v.lucroTotal)}</td><td style="color: var(--accent);">${formatMoney(v.proLabore || 0)}</td></tr>`;
   });
   html += '</tbody></table></div></div>';
   
@@ -1244,7 +1271,7 @@ function importarDados(e) {
       if (data.vendas) vendas = data.vendas;
       if (data.config) config = data.config;
       saveVendas(); saveConfig();
-      showToast('📤 Backup importado com sucesso!');
+      showToast(' Backup importado com sucesso!');
     } catch (err) { showToast('❌ Erro ao importar', true); }
   };
   reader.readAsText(file);
