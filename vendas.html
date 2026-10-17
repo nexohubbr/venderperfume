@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfumes Itabuna - Controle de Vendas Premium</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0a; --bg-2: #111111; --card: #0f0f0f; --border: #2a2520;
+    --border-light: #3d3528; --text: #f5f0e8; --muted: #9a9080;
+    --accent: #c9a961; --accent-2: #e0c882; --accent-dark: #8b7340;
+    --ok: #34d399; --danger: #ef4444; --info: #3b82f6; --warning: #f59e0b;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+  
+  /* HEADER */
+  .app-header {
+    background: linear-gradient(135deg, #1a1510, #0a0808);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .app-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .app-header p { color: var(--muted); font-size: 13px; }
+  
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex; gap: 8px; padding: 16px 24px;
+    background: var(--bg-2); border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 10px 20px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--muted); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .2s; white-space: nowrap;
+  }
+  .nav-tab:hover { border-color: var(--accent); color: var(--text); }
+  .nav-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  
+  /* MAIN */
+  .main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  .section { display: none; }
+  .section.active { display: block; }
+  
+  /* DASHBOARD CARDS */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px;
+  }
+  .stat-card .label { font-size: 11px; color: var(--muted); letter-spacing: 1.5px; font-weight: 600; margin-bottom: 8px; }
+  .stat-card .value { font-size: 28px; font-weight: 700; color: var(--accent); font-family: 'Playfair Display', serif; }
+  .stat-card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card.green .value { color: var(--ok); }
+  .stat-card.blue .value { color: var(--info); }
+  .stat-card.orange .value { color: var(--warning); }
+  
+  /* FILTERS */
+  .filters-bar {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;
+    padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 1px; }
+  .filter-group input, .filter-group select {
+    padding: 8px 12px; background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 13px;
+  }
+  .filter-group input:focus, .filter-group select:focus { outline: none; border-color: var(--accent); }
+  
+  /* PRODUCTS GRID */
+  .products-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .product-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; transition: all .2s;
+  }
+  .product-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .product-card .cat-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .cat-badge.original { background: #1e3a5f; color: #60a5fa; }
+  .cat-badge.arabe { background: #3b1f5e; color: #c084fc; }
+  .cat-badge.brand { background: #1e3a2f; color: #34d399; }
+  .cat-badge.brand-col { background: #5c3a1e; color: #fbbf24; }
+  .cat-badge.importado { background: #5e1f1f; color: #f87171; }
+  .product-card .name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .product-card .ref { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .product-card .prices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .product-card .price-box { background: var(--bg-2); padding: 8px; border-radius: 8px; }
+  .product-card .price-box .lbl { font-size: 9px; color: var(--muted); letter-spacing: 1px; font-weight: 600; }
+  .product-card .price-box .val { font-size: 14px; font-weight: 700; color: var(--accent); }
+  .product-card .price-box .val.cost { color: var(--muted); }
+  .product-card .price-box .val.profit { color: var(--ok); }
+  .product-card .actions { display: flex; gap: 8px; }
+  .product-card .actions button {
+    flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 8px;
+    background: var(--bg-2); color: var(--text); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .2s;
+  }
+  .product-card .actions button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+  .product-card .actions button.sell { background: var(--ok); color: #000; border-color: var(--ok); }
+  .product-card .actions button.sell:hover { background: #10b981; }
+  
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+    max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+  }
+  .modal-head {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .modal-head h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--accent); }
+  .modal-close {
+    background: transparent; border: none; color: var(--muted); font-size: 24px;
+    cursor: pointer; width: 32px; height: 32px; border-radius: 8px;
+  }
+  .modal-close:hover { background: var(--bg-2); color: var(--text); }
+  .modal-body { padding: 24px; }
+  
+  /* FORM */
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 10px 14px; background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 14px;
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  
+  /* CALC RESULT */
+  .calc-result {
+    background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; margin-top: 16px;
+  }
+  .calc-result .row {
+    display: flex; justify-content: space-between; padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .calc-result .row:last-child { border-bottom: none; }
+  .calc-result .row .lbl { color: var(--muted); font-size: 13px; }
+  .calc-result .row .val { font-weight: 700; color: var(--text); }
+  .calc-result .row.total .val { color: var(--ok); font-size: 18px; }
+  .calc-result .row.profit .val { color: var(--accent); }
+  
+  /* BUTTONS */
+  .btn {
+    padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 14px;
+    cursor: pointer; border: none; transition: all .2s; font-family: 'Inter', sans-serif;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: var(--accent-2); }
+  .btn-success { background: var(--ok); color: #000; }
+  .btn-success:hover { background: #10b981; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #dc2626; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-block { width: 100%; }
+  
+  /* SALES TABLE */
+  .sales-table {
+    width: 100%; border-collapse: collapse; background: var(--card);
+    border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  }
+  .sales-table th {
+    background: var(--bg-2); padding: 12px 16px; text-align: left;
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  .sales-table td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .sales-table tr:hover td { background: var(--bg-2); }
+  .sales-table .profit { color: var(--ok); font-weight: 600; }
+  .sales-table .action-btn {
+    padding: 6px 12px; background: var(--danger); color: #fff; border: none;
+    border-radius: 6px; font-size: 11px; cursor: pointer;
+  }
+  
+  /* CONFIG SECTION */
+  .config-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px; margin-bottom: 16px;
+  }
+  .config-card h3 { font-family: 'Playfair Display', serif; color: var(--accent); margin-bottom: 16px; font-size: 18px; }
+  
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--ok); color: #000; padding: 14px 26px; border-radius: 12px;
+    font-weight: 600; font-size: 13px; z-index: 300; transition: transform .3s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--danger); color: #fff; }
+  
+  /* SEARCH */
+  .search-box {
+    width: 100%; padding: 12px 16px; background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); font-size: 14px; margin-bottom: 16px;
+  }
+  .search-box:focus { outline: none; border-color: var(--accent); }
+  
+  /* CATEGORY FILTER */
+  .cat-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .cat-filter {
+    padding: 6px 14px; border-radius: 999px; background: var(--bg-2);
+    border: 1px solid var(--border); color: var(--muted); font-size: 12px;
+    cursor: pointer; transition: all .2s;
+  }
+  .cat-filter:hover { border-color: var(--accent); color: var(--text); }
+  .cat-filter.active { background: var(--accent); color: #000; border-color: var(--accent); }
+  
+  @media (max-width: 640px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .products-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .nav-tabs { padding: 12px; }
+    .main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>💎 Perfumes Itabuna - Controle de Vendas</h1>
+  <p>Sistema Premium de Gestão • Itabuna, Bahia</p>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" data-section="dashboard">📊 Dashboard</div>
+  <div class="nav-tab" data-section="catalogo">🛍️ Catálogo</div>
+  <div class="nav-tab" data-section="vendas">💰 Vendas</div>
+  <div class="nav-tab" data-section="calculadora">🧮 Calculadora</div>
+  <div class="nav-tab" data-section="atacado">📦 Atacado</div>
+  <div class="nav-tab" data-section="config">⚙️ Config</div>
+</div>
+
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div class="section active" id="dashboard">
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="label">VENDAS HOJE</div>
+        <div class="value" id="stat-vendas-hoje">R$ 0,00</div>
+        <div class="sub" id="stat-qtd-hoje">0 produtos</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">VENDAS MÊS</div>
+        <div class="value" id="stat-vendas-mes">R$ 0,00</div>
+        <div class="sub" id="stat-qtd-mes">0 produtos</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="label">LUCRO HOJE</div>
+        <div class="value" id="stat-lucro-hoje">R$ 0,00</div>
+        <div class="sub">Após custos</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="label">LUCRO MÊS</div>
+        <div class="value" id="stat-lucro-mes">R$ 0,00</div>
+        <div class="sub">Após custos</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">TOTAL PRODUTOS</div>
+        <div class="value" id="stat-total-prod">0</div>
+        <div class="sub">No catálogo</div>
+      </div>
+      <div class="stat-card green">
+        <div class="label">MARGEM MÉDIA</div>
+        <div class="value" id="stat-margem">0%</div>
+        <div class="sub">Lucro sobre custo</div>
+      </div>
+    </div>
+
+    <div class="config-card">
+      <h3>📈 Últimas Vendas</h3>
+      <div id="ultimas-vendas"></div>
+    </div>
+  </div>
+
+  <!-- CATÁLOGO -->
+  <div class="section" id="catalogo">
+    <input type="text" class="search-box" id="search-prod" placeholder="🔍 Buscar produto por nome ou referência...">
+    <div class="cat-filters" id="cat-filters">
+      <div class="cat-filter active" data-cat="todos">Todos</div>
+      <div class="cat-filter" data-cat="original">Originais</div>
+      <div class="cat-filter" data-cat="arabe">Árabes</div>
+      <div class="cat-filter" data-cat="brand">Brand</div>
+      <div class="cat-filter" data-cat="brand-col">Brand Collection</div>
+      <div class="cat-filter" data-cat="importado">Importados</div>
+    </div>
+    <div class="products-grid" id="products-grid"></div>
+  </div>
+
+  <!-- VENDAS -->
+  <div class="section" id="vendas">
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label>Período</label>
+        <select id="filter-periodo">
+          <option value="hoje">Hoje</option>
+          <option value="semana">Esta Semana</option>
+          <option value="mes" selected>Este Mês</option>
+          <option value="tudo">Tudo</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Categoria</label>
+        <select id="filter-categoria">
+          <option value="todos">Todas</option>
+          <option value="original">Originais</option>
+          <option value="arabe">Árabes</option>
+          <option value="brand">Brand</option>
+          <option value="importado">Importados</option>
+        </select>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <div class="label">FATURAMENTO</div>
+        <div class="value" id="vendas-fat">R$ 0,00</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">CUSTO TOTAL</div>
+        <div class="value" id="vendas-custo">R$ 0,00</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="label">LUCRO LÍQUIDO</div>
+        <div class="value" id="vendas-lucro">R$ 0,00</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="label">QTD VENDIDA</div>
+        <div class="value" id="vendas-qtd">0</div>
+      </div>
+    </div>
+    <div style="overflow-x: auto;">
+      <table class="sales-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Produto</th>
+            <th>Categoria</th>
+            <th>Custo</th>
+            <th>Venda</th>
+            <th>Lucro</th>
+            <th>Margem</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="vendas-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CALCULADORA -->
+  <div class="section" id="calculadora">
+    <div class="config-card">
+      <h3>🧮 Calculadora de Preço de Venda</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Custo do Produto (R$)</label>
+          <input type="number" id="calc-custo" step="0.01" placeholder="Ex: 15.00">
+        </div>
+        <div class="form-group">
+          <label>Quantidade no Pedido</label>
+          <input type="number" id="calc-qtd" value="10" min="1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Frete Total (R$)</label>
+          <input type="number" id="calc-frete" value="80" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Margem de Lucro (%)</label>
+          <input type="number" id="calc-margem" value="52" step="0.1">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="calcularPreco()">Calcular Preço de Venda</button>
+      
+      <div class="calc-result" id="calc-resultado" style="display:none;">
+        <div class="row">
+          <span class="lbl">Custo unitário do produto</span>
+          <span class="val" id="res-custo-unit">R$ 0,00</span>
+        </div>
+        <div class="row">
+          <span class="lbl">Frete por unidade</span>
+          <span class="val" id="res-frete-unit">R$ 0,00</span>
+        </div>
+        <div class="row">
+          <span class="lbl">Custo total unitário</span>
+          <span class="val" id="res-custo-total">R$ 0,00</span>
+        </div>
+        <div class="row profit">
+          <span class="lbl">Lucro por unidade</span>
+          <span class="val" id="res-lucro">R$ 0,00</span>
+        </div>
+        <div class="row total">
+          <span class="lbl">PREÇO DE VENDA SUGERIDO</span>
+          <span class="val" id="res-venda">R$ 0,00</span>
+        </div>
+        <div class="row">
+          <span class="lbl">Margem real sobre custo</span>
+          <span class="val" id="res-margem">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-card">
+      <h3>📊 Simulador de Margem Global</h3>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">
+        Aplique uma margem em todos os produtos e veja os preços de venda
+      </p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Margem Global (%)</label>
+          <input type="number" id="sim-margem" value="52" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Frete Médio por Pedido (R$)</label>
+          <input type="number" id="sim-frete" value="80" step="0.01">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="simularGlobal()">Simular em Todos os Produtos</button>
+      <div id="sim-resultado" style="margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <!-- ATACADO -->
+  <div class="section" id="atacado">
+    <div class="config-card">
+      <h3>📦 Configuração de Faixas de Atacado</h3>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">
+        Defina os mínimos e descontos para cada faixa de atacado
+      </p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Faixa 1 - Mínimo (unidades)</label>
+          <input type="number" id="atacado-f1-min" value="10">
+        </div>
+        <div class="form-group">
+          <label>Faixa 1 - Desconto (%)</label>
+          <input type="number" id="atacado-f1-desc" value="10" step="0.1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Faixa 2 - Mínimo (unidades)</label>
+          <input type="number" id="atacado-f2-min" value="30">
+        </div>
+        <div class="form-group">
+          <label>Faixa 2 - Desconto (%)</label>
+          <input type="number" id="atacado-f2-desc" value="15" step="0.1">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Faixa 3 - Mínimo (unidades)</label>
+          <input type="number" id="atacado-f3-min" value="50">
+        </div>
+        <div class="form-group">
+          <label>Faixa 3 - Desconto (%)</label>
+          <input type="number" id="atacado-f3-desc" value="20" step="0.1">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="salvarAtacado()">Salvar Configurações</button>
+    </div>
+
+    <div class="config-card">
+      <h3>💡 Calculadora de Atacado</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Produto</label>
+          <select id="atacado-produto"></select>
+        </div>
+        <div class="form-group">
+          <label>Quantidade</label>
+          <input type="number" id="atacado-qtd" value="10" min="1">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="calcularAtacado()">Calcular Preço Atacado</button>
+      <div class="calc-result" id="atacado-resultado" style="display:none; margin-top: 16px;"></div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="section" id="config">
+    <div class="config-card">
+      <h3>⚙️ Configurações Gerais</h3>
+      <div class="form-group">
+        <label>Margem Padrão (%)</label>
+        <input type="number" id="cfg-margem" value="52" step="0.1">
+      </div>
+      <div class="form-group">
+        <label>Frete Padrão por Pedido (R$)</label>
+        <input type="number" id="cfg-frete" value="80" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Quantidade Mínima por Pedido</label>
+        <input type="number" id="cfg-min" value="10">
+      </div>
+      <button class="btn btn-primary" onclick="salvarConfig()">Salvar Configurações</button>
+    </div>
+
+    <div class="config-card">
+      <h3> Backup de Dados</h3>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">
+        Exporte ou importe seus dados de vendas
+      </p>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="exportarDados()">📥 Exportar Dados</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">📤 Importar Dados</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importarDados(event)">
+        <button class="btn btn-danger" onclick="limparVendas()">🗑️ Limpar Vendas</button>
+      </div>
+    </div>
+
+    <div class="config-card">
+      <h3> Tabela de Preços de Custo</h3>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">
+        Total de produtos carregados: <strong id="cfg-total-prod">0</strong>
+      </p>
+      <div style="max-height: 400px; overflow-y: auto;">
+        <table class="sales-table">
+          <thead>
+            <tr><th>Produto</th><th>Categoria</th><th>Custo</th></tr>
+          </thead>
+          <tbody id="cfg-tabela-prod"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL VENDA -->
+<div class="modal-overlay" id="modal-venda">
+  <div class="modal">
+    <div class="modal-head">
+      <h3> Registrar Venda</h3>
+      <button class="modal-close" onclick="fecharModal('modal-venda')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="venda-info"></div>
+      <div class="form-group">
+        <label>Quantidade</label>
+        <input type="number" id="venda-qtd" value="1" min="1">
+      </div>
+      <div class="form-group">
+        <label>Tipo de Venda</label>
+        <select id="venda-tipo">
+          <option value="varejo">Varejo</option>
+          <option value="atacado-f1">Atacado Faixa 1</option>
+          <option value="atacado-f2">Atacado Faixa 2</option>
+          <option value="atacado-f3">Atacado Faixa 3</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nome do Cliente (opcional)</label>
+        <input type="text" id="venda-cliente" placeholder="Ex: João Silva">
+      </div>
+      <div class="calc-result" id="venda-resumo"></div>
+      <div style="display: flex; gap: 12px; margin-top: 16px;">
+        <button class="btn btn-ghost" onclick="fecharModal('modal-venda')">Cancelar</button>
+        <button class="btn btn-success btn-block" onclick="confirmarVenda()">✅ Confirmar Venda</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ================= DADOS DOS PRODUTOS (extraídos dos PDFs) =================
+const produtos = [
+  // ORIGINAIS IMPORTADOS MASCULINOS
+  { id:'ori-invictus200', nome:'Invictus 200ml', ref:'Paco Rabanne', cat:'importado', custo:530, publico:'Masculino', vol:'200ml' },
+  { id:'ori-silver-intense', nome:'Silver Scent Intense 100ml', ref:'Jacques Bogart', cat:'importado', custo:670, publico:'Masculino', vol:'100ml' },
+  { id:'ori-212vip200', nome:'212 VIP Men 200ml', ref:'Carolina Herrera', cat:'importado', custo:610, publico:'Masculino', vol:'200ml' },
+  { id:'ori-invictus-victory', nome:'Invictus Victory 200ml', ref:'Paco Rabanne', cat:'importado', custo:565, publico:'Masculino', vol:'200ml' },
+  { id:'ori-chmen200', nome:'CH Men 200ml', ref:'Carolina Herrera', cat:'importado', custo:440, publico:'Masculino', vol:'200ml' },
+  { id:'ori-silver', nome:'Silver Scent', ref:'Jacques Bogart', cat:'importado', custo:170, publico:'Masculino', vol:'100ml' },
+  { id:'ori-212heroes', nome:'212 Men Heroes 90ml', ref:'Carolina Herrera', cat:'importado', custo:150, publico:'Masculino', vol:'90ml' },
+  { id:'ori-212vipblack', nome:'212 VIP Black 200ml', ref:'Carolina Herrera', cat:'importado', custo:530, publico:'Masculino', vol:'200ml' },
+  // ORIGINAIS IMPORTADOS FEMININOS
+  { id:'ori-fantasy', nome:'Fantasy', ref:'Britney Spears', cat:'importado', custo:210, publico:'Feminino', vol:'100ml' },
+  { id:'ori-jadore100', nome:'J\'adore 100ml', ref:'Dior', cat:'importado', custo:810, publico:'Feminino', vol:'100ml' },
+  { id:'ori-lavie100', nome:'La Vie Est Belle 100ml', ref:'Lancôme', cat:'importado', custo:535, publico:'Feminino', vol:'100ml' },
+  // ÁRABES MASCULINOS
+  { id:'ara-alnoble-ameer', nome:'Al Noble Ameer', ref:'Lattafa', cat:'arabe', custo:170, publico:'Masculino', vol:'100ml' },
+  { id:'ara-alnoble-safeer', nome:'Al Noble Safeer', ref:'Lattafa', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
+  { id:'ara-alnoble-wazeer', nome:'Al Noble Wazeer', ref:'Lattafa', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
+  { id:'ara-fakhar-platin', nome:'Fakhar Platin', ref:'Lattafa', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
+  { id:'ara-fakhar-black', nome:'Fakhar Black', ref:'Lattafa', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
+  { id:'ara-fakhar-gold', nome:'Fakhar Gold', ref:'Lattafa', cat:'arabe', custo:160, publico:'Masculino', vol:'100ml' },
+  { id:'ara-asad-zanzibar', nome:'Asad Zanzibar', ref:'Lattafa', cat:'arabe', custo:220, publico:'Masculino', vol:'100ml' },
+  { id:'ara-asad-elixir', nome:'Asad Elixir', ref:'Lattafa', cat:'arabe', custo:195, publico:'Masculino', vol:'100ml' },
+  { id:'ara-asad-trad', nome:'Asad Tradicional', ref:'Lattafa', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-rayhaan-elixir', nome:'Rayhaan Elixir', ref:'Rayhaan', cat:'arabe', custo:175, publico:'Masculino', vol:'100ml' },
+  { id:'ara-jeanlowe-fant', nome:'Jean Lowe Fantasm', ref:'Jean Lowe', cat:'arabe', custo:260, publico:'Masculino', vol:'100ml' },
+  { id:'ara-philos-pura', nome:'Philos Pura', ref:'Philos', cat:'arabe', custo:125, publico:'Masculino', vol:'100ml' },
+  { id:'ara-spectre-amaz', nome:'Spectre Amazonite', ref:'Armaf', cat:'arabe', custo:235, publico:'Masculino', vol:'100ml' },
+  { id:'ara-spectre-ghost', nome:'Spectre Ghost French', ref:'Armaf', cat:'arabe', custo:205, publico:'Masculino', vol:'100ml' },
+  { id:'ara-philos-opus', nome:'Philos Opus Noir', ref:'Philos', cat:'arabe', custo:290, publico:'Masculino', vol:'100ml' },
+  { id:'ara-avenue', nome:'Avenue', ref:'Armaf', cat:'arabe', custo:150, publico:'Masculino', vol:'100ml' },
+  { id:'ara-niche-emarati', nome:'Niche Emarati', ref:'Niche', cat:'arabe', custo:115, publico:'Masculino', vol:'100ml' },
+  { id:'ara-khanjar', nome:'Khanjar', ref:'Lattafa', cat:'arabe', custo:85, publico:'Masculino', vol:'100ml' },
+  { id:'ara-winners-trophy', nome:'Winners Trophy Gold', ref:'Afnan', cat:'arabe', custo:260, publico:'Masculino', vol:'100ml' },
+  { id:'ara-eternal-vanille', nome:'Eternal Vanille', ref:'Lattafa', cat:'arabe', custo:150, publico:'Unissex', vol:'100ml' },
+  { id:'ara-dream-haze', nome:'Dream of Haze', ref:'Lattafa', cat:'arabe', custo:250, publico:'Masculino', vol:'100ml' },
+  { id:'ara-attar-gold', nome:'Attar Gold', ref:'Lattafa', cat:'arabe', custo:130, publico:'Masculino', vol:'100ml' },
+  { id:'ara-al-layl', nome:'Al Layl', ref:'Lattafa', cat:'arabe', custo:145, publico:'Masculino', vol:'100ml' },
+  { id:'ara-musamam-black', nome:'Musamam Black Intense', ref:'Lattafa', cat:'arabe', custo:225, publico:'Masculino', vol:'100ml' },
+  { id:'ara-hawas-him', nome:'Hawas for Him', ref:'Rasasi', cat:'arabe', custo:115, publico:'Masculino', vol:'100ml' },
+  { id:'ara-jeanlowe-imm', nome:'Jean Lowe Immortal', ref:'Jean Lowe', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-sheriff', nome:'Sheriff', ref:'Lattafa', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-urban', nome:'Club de Nuit Urban Men', ref:'Armaf', cat:'arabe', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'ara-maahir-honor', nome:'Maahir Honor Branco', ref:'Lattafa', cat:'arabe', custo:165, publico:'Masculino', vol:'100ml' },
+  { id:'ara-dark-aoud', nome:'Dark Aoud', ref:'Lattafa', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-bidaya', nome:'Bidaya', ref:'Lattafa', cat:'arabe', custo:155, publico:'Masculino', vol:'100ml' },
+  { id:'ara-habibi-king', nome:'Habibi King', ref:'Lattafa', cat:'arabe', custo:155, publico:'Masculino', vol:'100ml' },
+  { id:'ara-bidaya-maktub', nome:'Bidaya Maktub', ref:'Lattafa', cat:'arabe', custo:155, publico:'Masculino', vol:'100ml' },
+  { id:'ara-la-vie-arabe', nome:'La Vie', ref:'Lattafa', cat:'arabe', custo:145, publico:'Feminino', vol:'100ml' },
+  { id:'ara-mishlah', nome:'Mishlah', ref:'Lattafa', cat:'arabe', custo:210, publico:'Masculino', vol:'100ml' },
+  { id:'ara-rayhaan-cordova', nome:'Rayhaan Cordova', ref:'Rayhaan', cat:'arabe', custo:210, publico:'Masculino', vol:'100ml' },
+  { id:'ara-salvo-edp', nome:'Salvo EDP', ref:'Lattafa', cat:'arabe', custo:175, publico:'Masculino', vol:'100ml' },
+  { id:'ara-khamrah', nome:'Khamrah', ref:'Lattafa', cat:'arabe', custo:160, publico:'Unissex', vol:'100ml' },
+  { id:'ara-khamrah-dukhan', nome:'Khamrah Dukhan', ref:'Lattafa', cat:'arabe', custo:190, publico:'Unissex', vol:'100ml' },
+  { id:'ara-khamrah-qahwa', nome:'Khamrah Qahwa', ref:'Lattafa', cat:'arabe', custo:200, publico:'Unissex', vol:'100ml' },
+  { id:'ara-odyssey-mandarin', nome:'Odyssey Mandarin Sky', ref:'Armaf', cat:'arabe', custo:255, publico:'Masculino', vol:'100ml' },
+  { id:'ara-odyssey-limoni', nome:'Odyssey Limoni', ref:'Armaf', cat:'arabe', custo:220, publico:'Masculino', vol:'100ml' },
+  { id:'ara-afnan-9pm', nome:'Afnan 9PM', ref:'Afnan', cat:'arabe', custo:175, publico:'Masculino', vol:'100ml' },
+  { id:'ara-afnan-sup-gold', nome:'Afnan Supremacy Gold', ref:'Afnan', cat:'arabe', custo:90, publico:'Masculino', vol:'100ml' },
+  { id:'ara-afnan-turathi', nome:'Afnan Turathi', ref:'Afnan', cat:'arabe', custo:140, publico:'Masculino', vol:'100ml' },
+  { id:'ara-eletric-maison', nome:'Eletric Maison', ref:'Maison', cat:'arabe', custo:210, publico:'Masculino', vol:'100ml' },
+  { id:'ara-so-candid', nome:'So Candid Pour Home', ref:'Maison', cat:'arabe', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'ara-maison-jeanlowe', nome:'Maison Jean Lowe', ref:'Jean Lowe', cat:'arabe', custo:215, publico:'Masculino', vol:'100ml' },
+  { id:'ara-summer-vibes', nome:'Summer Vibes', ref:'Maison', cat:'arabe', custo:250, publico:'Masculino', vol:'100ml' },
+  { id:'ara-special-oud', nome:'Special Oud', ref:'Maison', cat:'arabe', custo:215, publico:'Masculino', vol:'100ml' },
+  { id:'ara-attar-wesal', nome:'Attar Al Wesal', ref:'Lattafa', cat:'arabe', custo:100, publico:'Unissex', vol:'100ml' },
+  { id:'ara-cdn-intense', nome:'Club de Nuit Intense', ref:'Armaf', cat:'arabe', custo:150, publico:'Masculino', vol:'100ml' },
+  { id:'ara-philos-shine', nome:'Philos Shine', ref:'Philos', cat:'arabe', custo:140, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-sillage', nome:'Club de Nuit Sillage', ref:'Armaf', cat:'arabe', custo:210, publico:'Masculino', vol:'100ml' },
+  { id:'ara-art-universe', nome:'Art of Universe', ref:'Armaf', cat:'arabe', custo:385, publico:'Masculino', vol:'100ml' },
+  { id:'ara-pisa', nome:'Pisa', ref:'Armaf', cat:'arabe', custo:175, publico:'Masculino', vol:'100ml' },
+  { id:'ara-maahir-gold', nome:'Maahir Gold', ref:'Lattafa', cat:'arabe', custo:235, publico:'Masculino', vol:'100ml' },
+  { id:'ara-his-confession', nome:'His Confession', ref:'Lattafa', cat:'arabe', custo:310, publico:'Masculino', vol:'100ml' },
+  { id:'ara-galactic-men', nome:'Galactic Men', ref:'Lattafa', cat:'arabe', custo:115, publico:'Masculino', vol:'100ml' },
+  { id:'ara-badee-glory-black', nome:'Badee Al Oud Glory Black', ref:'Lattafa', cat:'arabe', custo:200, publico:'Masculino', vol:'100ml' },
+  { id:'ara-khamrah-waha', nome:'Khamrah Waha', ref:'Lattafa', cat:'arabe', custo:160, publico:'Unissex', vol:'100ml' },
+  { id:'ara-jeanlowe-vibe', nome:'Jean Lowe Vibe', ref:'Jean Lowe', cat:'arabe', custo:235, publico:'Masculino', vol:'100ml' },
+  { id:'ara-turathi-blue', nome:'Turathi Blue', ref:'Afnan', cat:'arabe', custo:130, publico:'Masculino', vol:'100ml' },
+  { id:'ara-vulcan-feu', nome:'Vulcan Feu', ref:'Lattafa', cat:'arabe', custo:155, publico:'Masculino', vol:'100ml' },
+  { id:'ara-hayaati-preto', nome:'Hayaati Preto', ref:'Lattafa', cat:'arabe', custo:195, publico:'Masculino', vol:'100ml' },
+  { id:'ara-king-arabia', nome:'King of Arabia', ref:'Lattafa', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-vintage-radio', nome:'Vintage Radio', ref:'Lattafa', cat:'arabe', custo:210, publico:'Masculino', vol:'100ml' },
+  { id:'ara-hawas-black', nome:'Hawas Black', ref:'Rasasi', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
+  { id:'ara-oud-mystery', nome:'Oud Mystery', ref:'Lattafa', cat:'arabe', custo:130, publico:'Masculino', vol:'100ml' },
+  { id:'ara-rayhaan-dark', nome:'Rayhaan Dark Leather', ref:'Rayhaan', cat:'arabe', custo:250, publico:'Masculino', vol:'100ml' },
+  { id:'ara-rayhaan-lion', nome:'Rayhaan Lion', ref:'Rayhaan', cat:'arabe', custo:95, publico:'Masculino', vol:'100ml' },
+  { id:'ara-rayhaan-ocean', nome:'Rayhaan Ocean Rush', ref:'Rayhaan', cat:'arabe', custo:195, publico:'Masculino', vol:'100ml' },
+  { id:'ara-rayhaan-pacific', nome:'Rayhaan Pacific', ref:'Rayhaan', cat:'arabe', custo:350, publico:'Masculino', vol:'100ml' },
+  { id:'ara-qaed-preto', nome:'Qaed Preto', ref:'Lattafa', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-salvo-elixir', nome:'Salvo Elixir', ref:'Lattafa', cat:'arabe', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'ara-asad-bourbon', nome:'Asad Bourbon', ref:'Lattafa', cat:'arabe', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'ara-philos-centro', nome:'Philos Centro', ref:'Philos', cat:'arabe', custo:285, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-milestone', nome:'Club de Nuit Milestone', ref:'Armaf', cat:'arabe', custo:285, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-overdose', nome:'Club de Nuit Overdose', ref:'Armaf', cat:'arabe', custo:235, publico:'Masculino', vol:'100ml' },
+  { id:'ara-atlas', nome:'Atlas', ref:'Armaf', cat:'arabe', custo:235, publico:'Masculino', vol:'100ml' },
+  { id:'ara-qaed-marrom', nome:'Qaed Marrom', ref:'Lattafa', cat:'arabe', custo:85, publico:'Masculino', vol:'100ml' },
+  { id:'ara-the-kingdom', nome:'The Kingdom', ref:'Lattafa', cat:'arabe', custo:95, publico:'Masculino', vol:'100ml' },
+  { id:'ara-unknown', nome:'Unknown', ref:'Lattafa', cat:'arabe', custo:160, publico:'Masculino', vol:'100ml' },
+  { id:'ara-deep-woods', nome:'Deep Woods', ref:'Lattafa', cat:'arabe', custo:215, publico:'Masculino', vol:'100ml' },
+  { id:'ara-perseus-trad', nome:'Perseus Tradicional', ref:'Lattafa', cat:'arabe', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'ara-perseus-exc', nome:'Perseus Exclusif', ref:'Lattafa', cat:'arabe', custo:160, publico:'Masculino', vol:'100ml' },
+  { id:'ara-liquid-brun', nome:'Liquid Brun', ref:'Mancera', cat:'arabe', custo:245, publico:'Masculino', vol:'100ml' },
+  { id:'ara-bidaya-sex', nome:'Bidaya Sex on the Rocks', ref:'Lattafa', cat:'arabe', custo:410, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-urban-elixir', nome:'Club de Nuit Urban Elixir', ref:'Armaf', cat:'arabe', custo:115, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-iconic', nome:'Club de Nuit Iconic', ref:'Armaf', cat:'arabe', custo:330, publico:'Masculino', vol:'100ml' },
+  { id:'ara-art-arabia', nome:'Art of Arábia', ref:'Armaf', cat:'arabe', custo:160, publico:'Masculino', vol:'100ml' },
+  { id:'ara-hayaati-gold', nome:'Hayaati Gold Elixir', ref:'Lattafa', cat:'arabe', custo:190, publico:'Masculino', vol:'100ml' },
+  { id:'ara-maison-galatea', nome:'Maison Galatea', ref:'Maison', cat:'arabe', custo:200, publico:'Masculino', vol:'100ml' },
+  { id:'ara-jeanlowe-azure', nome:'Jean Lowe Azure', ref:'Jean Lowe', cat:'arabe', custo:260, publico:'Masculino', vol:'100ml' },
+  { id:'ara-altheron', nome:'Altheron EDP 50ml', ref:'Lattafa', cat:'arabe', custo:210, publico:'Masculino', vol:'50ml' },
+  { id:'ara-loris-acqua', nome:'Loris Acqua', ref:'Niche Loris', cat:'arabe', custo:455, publico:'Masculino', vol:'100ml' },
+  { id:'ara-woods', nome:'Woods', ref:'Niche Loris', cat:'arabe', custo:170, publico:'Masculino', vol:'100ml' },
+  { id:'ara-fahad', nome:'Fahad', ref:'Lattafa', cat:'arabe', custo:110, publico:'Masculino', vol:'100ml' },
+  { id:'ara-afnan-sup', nome:'Afnan Supremacy', ref:'Afnan', cat:'arabe', custo:395, publico:'Masculino', vol:'100ml' },
+  { id:'ara-bareeq', nome:'Bareeq', ref:'Lattafa', cat:'arabe', custo:105, publico:'Masculino', vol:'100ml' },
+  { id:'ara-maison-mindset', nome:'Maison Mindset', ref:'Maison', cat:'arabe', custo:205, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn', nome:'Club de Nuit', ref:'Armaf', cat:'arabe', custo:195, publico:'Masculino', vol:'100ml' },
+  { id:'ara-odyssey-homme', nome:'Odyssey Homme', ref:'Armaf', cat:'arabe', custo:170, publico:'Masculino', vol:'100ml' },
+  { id:'ara-odyssey-white', nome:'Odyssey White Edition', ref:'Armaf', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-hawas-verde', nome:'Hawas Verde', ref:'Rasasi', cat:'arabe', custo:140, publico:'Masculino', vol:'100ml' },
+  { id:'ara-9am-dive', nome:'9AM Dive U', ref:'Armaf', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-fuego', nome:'Club de Nuit Fuego', ref:'Armaf', cat:'arabe', custo:140, publico:'Masculino', vol:'100ml' },
+  { id:'ara-alpine', nome:'Alpine Home Sport', ref:'Armaf', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
+  { id:'ara-glacier-gold', nome:'Glacier Gold', ref:'Armaf', cat:'arabe', custo:185, publico:'Masculino', vol:'100ml' },
+  { id:'ara-cdn-elite', nome:'Club de Nuit Elite', ref:'Armaf', cat:'arabe', custo:205, publico:'Masculino', vol:'100ml' },
+  { id:'ara-alwatani', nome:'Al Watani Intense', ref:'Al Watani', cat:'arabe', custo:195, publico:'Masculino', vol:'100ml' },
+  { id:'ara-masa', nome:'Masa', ref:'Lattafa', cat:'arabe', custo:170, publico:'Masculino', vol:'100ml' },
+  { id:'ara-salvo-intense', nome:'Salvo Intense', ref:'Lattafa', cat:'arabe', custo:370, publico:'Masculino', vol:'100ml' },
+  // ÁRABES FEMININOS
+  { id:'ara-yara-elixir', nome:'Yara Elixir', ref:'Lattafa', cat:'arabe', custo:135, publico:'Feminino', vol:'100ml' },
+  { id:'ara-yara-tous', nome:'Yara Tous', ref:'Lattafa', cat:'arabe', custo:185, publico:'Feminino', vol:'100ml' },
+  { id:'ara-yara-moi', nome:'Yara Moi', ref:'Lattafa', cat:'arabe', custo:140, publico:'Feminino', vol:'100ml' },
+  { id:'ara-angham', nome:'Angham', ref:'Lattafa', cat:'arabe', custo:160, publico:'Feminino', vol:'100ml' },
+  { id:'ara-yara-rose', nome:'Yara Rose', ref:'Lattafa', cat:'arabe', custo:110, publico:'Feminino', vol:'100ml' },
+  { id:'ara-yara-candy', nome:'Yara Candy', ref:'Lattafa', cat:'arabe', custo:205, publico:'Feminino', vol:'100ml' },
+  { id:'ara-vulcan-baie', nome:'Vulcan Baie', ref:'Lattafa', cat:'arabe', custo:195, publico:'Feminino', vol:'100ml' },
+  { id:'ara-ajwad', nome:'Ajwad', ref:'Lattafa', cat:'arabe', custo:170, publico:'Feminino', vol:'100ml' },
+  { id:'ara-royal-amber', nome:'Royal Amber', ref:'Lattafa', cat:'arabe', custo:370, publico:'Feminino', vol:'100ml' },
+  { id:'ara-cookie', nome:'Cookie Crave', ref:'Lattafa', cat:'arabe', custo:280, publico:'Feminino', vol:'100ml' },
+  { id:'ara-vanilla-freak', nome:'Vanilla Freak', ref:'Lattafa', cat:'arabe', custo:280, publico:'Feminino', vol:'100ml' },
+  { id:'ara-berry', nome:'Berry on Top', ref:'Lattafa', cat:'arabe', custo:280, publico:'Feminino', vol:'100ml' },
+  { id:'ara-mallow', nome:'Mallow Madness', ref:'Lattafa', cat:'arabe', custo:280, publico:'Feminino', vol:'100ml' },
+  { id:'ara-choco', nome:'Choco Overdose', ref:'Lattafa', cat:'arabe', custo:280, publico:'Feminino', vol:'100ml' },
+  { id:'ara-whipped', nome:'Whipped Pleasure', ref:'Lattafa', cat:'arabe', custo:410, publico:'Feminino', vol:'100ml' },
+  { id:'ara-afeef', nome:'Afeef', ref:'Lattafa', cat:'arabe', custo:190, publico:'Feminino', vol:'100ml' },
+  { id:'ara-victoria', nome:'Victoria Lattafa', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-bad-femme', nome:'Bad Femme', ref:'Lattafa', cat:'arabe', custo:315, publico:'Feminino', vol:'100ml' },
+  { id:'ara-ajwad-pink', nome:'Ajwad Pink', ref:'Lattafa', cat:'arabe', custo:110, publico:'Feminino', vol:'100ml' },
+  { id:'ara-atheeri', nome:'Atheeri', ref:'Lattafa', cat:'arabe', custo:210, publico:'Feminino', vol:'100ml' },
+  { id:'ara-vivacite', nome:'La Vivacité Intensa', ref:'Lattafa', cat:'arabe', custo:155, publico:'Feminino', vol:'100ml' },
+  { id:'ara-durrat-love', nome:'Durrat Love', ref:'Lattafa', cat:'arabe', custo:220, publico:'Feminino', vol:'100ml' },
+  { id:'ara-eclaire-pist', nome:'Eclaire Pistache', ref:'Lattafa', cat:'arabe', custo:120, publico:'Feminino', vol:'100ml' },
+  { id:'ara-raneen', nome:'Raneen', ref:'Lattafa', cat:'arabe', custo:105, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sabah', nome:'Sabah', ref:'Lattafa', cat:'arabe', custo:120, publico:'Feminino', vol:'100ml' },
+  { id:'ara-valentine', nome:'Valentine', ref:'Lattafa', cat:'arabe', custo:160, publico:'Feminino', vol:'100ml' },
+  { id:'ara-thahaani', nome:'Thahaani', ref:'Lattafa', cat:'arabe', custo:195, publico:'Feminino', vol:'100ml' },
+  { id:'ara-shagaf', nome:'Shagaf', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'100ml' },
+  { id:'ara-maison-rouge', nome:'Maison La Rouge Baroque Extrait', ref:'Maison', cat:'arabe', custo:105, publico:'Feminino', vol:'100ml' },
+  { id:'ara-maison-luminous', nome:'Maison Luminous Vivid', ref:'Maison', cat:'arabe', custo:220, publico:'Feminino', vol:'100ml' },
+  { id:'ara-cdn-maleka', nome:'Club de Nuit Maleka', ref:'Armaf', cat:'arabe', custo:140, publico:'Feminino', vol:'100ml' },
+  { id:'ara-yum-yum', nome:'Yum Yum', ref:'Lattafa', cat:'arabe', custo:135, publico:'Feminino', vol:'100ml' },
+  { id:'ara-her-conf', nome:'Her Confession', ref:'Lattafa', cat:'arabe', custo:255, publico:'Feminino', vol:'100ml' },
+  { id:'ara-manaal', nome:'Manaal', ref:'Lattafa', cat:'arabe', custo:205, publico:'Feminino', vol:'100ml' },
+  { id:'ara-zafaran', nome:'Zafaran', ref:'Lattafa', cat:'arabe', custo:175, publico:'Feminino', vol:'100ml' },
+  { id:'ara-badee-ameth', nome:'Badee Amethyst', ref:'Lattafa', cat:'arabe', custo:250, publico:'Feminino', vol:'100ml' },
+  { id:'ara-mayar', nome:'Mayar', ref:'Lattafa', cat:'arabe', custo:230, publico:'Feminino', vol:'100ml' },
+  { id:'ara-eclaire-ban', nome:'Eclaire Banoffi', ref:'Lattafa', cat:'arabe', custo:165, publico:'Feminino', vol:'100ml' },
+  { id:'ara-cdn-untold', nome:'Club de Nuit Untold', ref:'Armaf', cat:'arabe', custo:165, publico:'Feminino', vol:'100ml' },
+  { id:'ara-teriaq', nome:'Teriaq Lattafa Petra', ref:'Lattafa', cat:'arabe', custo:220, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sabah-garden', nome:'Sabah Garden of Eden', ref:'Lattafa', cat:'arabe', custo:130, publico:'Feminino', vol:'100ml' },
+  { id:'ara-noble-blush', nome:'Noble Blush', ref:'Lattafa', cat:'arabe', custo:220, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sublime', nome:'Sublime', ref:'Lattafa', cat:'arabe', custo:150, publico:'Feminino', vol:'100ml' },
+  { id:'ara-emeer', nome:'Emeer', ref:'Lattafa', cat:'arabe', custo:140, publico:'Feminino', vol:'100ml' },
+  { id:'ara-ameerati-verm', nome:'Ameerati Vermelho', ref:'Lattafa', cat:'arabe', custo:155, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sabah-delilah', nome:'Sabah Delilah', ref:'Lattafa', cat:'arabe', custo:200, publico:'Feminino', vol:'100ml' },
+  { id:'ara-badee-honor', nome:'Badee Al Oud Honor', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'100ml' },
+  { id:'ara-fakhar-rose', nome:'Fakhar Rose', ref:'Lattafa', cat:'arabe', custo:140, publico:'Feminino', vol:'100ml' },
+  { id:'ara-la-rouge-bar', nome:'La Rouge Baroque', ref:'Maison', cat:'arabe', custo:185, publico:'Feminino', vol:'100ml' },
+  { id:'ara-opera-rouge', nome:'Opera Rouge', ref:'Lattafa', cat:'arabe', custo:120, publico:'Feminino', vol:'100ml' },
+  { id:'ara-emaan', nome:'Emaan', ref:'Lattafa', cat:'arabe', custo:220, publico:'Feminino', vol:'100ml' },
+  { id:'ara-haya', nome:'Haya', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-durrat', nome:'Durrat', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-eclaire', nome:'Eclaire', ref:'Lattafa', cat:'arabe', custo:200, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sabah-ward', nome:'Sabah Al Ward', ref:'Lattafa', cat:'arabe', custo:150, publico:'Feminino', vol:'100ml' },
+  { id:'ara-nebras', nome:'Nebras Elixir', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-veneno', nome:'Veneno Bianco', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-musaman-white', nome:'Musaman White', ref:'Lattafa', cat:'arabe', custo:110, publico:'Feminino', vol:'100ml' },
+  { id:'ara-delilah-blanc', nome:'Delilah Blanc', ref:'Lattafa', cat:'arabe', custo:170, publico:'Feminino', vol:'100ml' },
+  { id:'ara-tharwah-gold', nome:'Tharwah Gold', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-jouri', nome:'Jouri', ref:'Lattafa', cat:'arabe', custo:125, publico:'Feminino', vol:'100ml' },
+  { id:'ara-intrude', nome:'Intrude', ref:'Lattafa', cat:'arabe', custo:110, publico:'Feminino', vol:'100ml' },
+  { id:'ara-papilon', nome:'Papilon Dor Pour', ref:'Lattafa', cat:'arabe', custo:215, publico:'Feminino', vol:'100ml' },
+  { id:'ara-ameerati-sugar', nome:'Ameerati Sugar', ref:'Lattafa', cat:'arabe', custo:160, publico:'Feminino', vol:'100ml' },
+  { id:'ara-hamidi-dir', nome:'Hamidi My Direction', ref:'Hamidi', cat:'arabe', custo:155, publico:'Feminino', vol:'100ml' },
+  { id:'ara-hamidi-delyn', nome:'Hamidi Delyn', ref:'Hamidi', cat:'arabe', custo:125, publico:'Feminino', vol:'100ml' },
+  { id:'ara-hamidi-desire', nome:'Hamidi Desire', ref:'Hamidi', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-aura', nome:'Aura Hamidi', ref:'Hamidi', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-astral', nome:'Astral Altheron', ref:'Altheron', cat:'arabe', custo:120, publico:'Feminino', vol:'100ml' },
+  { id:'ara-black-shine', nome:'Black Shine', ref:'Altheron', cat:'arabe', custo:215, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sabah-sugar', nome:'Sabah Sugar', ref:'Lattafa', cat:'arabe', custo:135, publico:'Feminino', vol:'100ml' },
+  { id:'ara-cdn-woman', nome:'Club de Nuit Woman', ref:'Armaf', cat:'arabe', custo:125, publico:'Feminino', vol:'100ml' },
+  { id:'ara-kingdom-fem', nome:'The Kingdom Feminino', ref:'Lattafa', cat:'arabe', custo:295, publico:'Feminino', vol:'100ml' },
+  { id:'ara-maison-athena', nome:'Maison Athena', ref:'Maison', cat:'arabe', custo:195, publico:'Feminino', vol:'100ml' },
+  { id:'ara-opulent', nome:'Opulent Dubai', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-ameeri', nome:'Ameeri', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-amnia', nome:'Amnia', ref:'Lattafa', cat:'arabe', custo:115, publico:'Feminino', vol:'100ml' },
+  { id:'ara-amerrati-dour', nome:'Amerrati Dourado', ref:'Lattafa', cat:'arabe', custo:295, publico:'Feminino', vol:'100ml' },
+  { id:'ara-pink-eclipse', nome:'Pink Eclipse', ref:'Lattafa', cat:'arabe', custo:295, publico:'Feminino', vol:'100ml' },
+  { id:'ara-sakeena', nome:'Sakeena', ref:'Lattafa', cat:'arabe', custo:180, publico:'Feminino', vol:'100ml' },
+  { id:'ara-chants', nome:'Chants', ref:'Lattafa', cat:'arabe', custo:230, publico:'Feminino', vol:'100ml' },
+  { id:'ara-tenderina', nome:'Tenderina', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-vanilla-voyage', nome:'Vanilla Voyage', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-delilah-sun', nome:'Delilah Sundown', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-hamidi-auto', nome:'Hamidi Autograph', ref:'Hamidi', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-obsidian', nome:'Obsidian Bloom', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-milky-way', nome:'Hamidi Milky Way', ref:'Hamidi', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-coffee-blend', nome:'Coffee Blend', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-candid', nome:'Candid', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-delilah-viola', nome:'Delilah Viola', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
+  { id:'ara-niche-exclusive', nome:'Niche Loris Exclusive', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-noble', nome:'Niche Loris Noble', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-white', nome:'Niche Loris White Leather', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-river', nome:'Niche Loris River Wood', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-sultan', nome:'Niche Loris Sultan\'s Mágicos', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-coco', nome:'Niche Loris Coco Vanille', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-velvet', nome:'Niche Loris Velvet Touch', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-passion', nome:'Niche Loris Passion', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-saffron', nome:'Niche Loris Saffron Ambre', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-bergamot', nome:'Niche Loris Bergamot Patcholi', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-niche-wood', nome:'Niche Loris Wood Song', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
+  { id:'ara-lattafa-happy', nome:'Lattafa Happy Time', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
+  { id:'ara-lattafa-stop', nome:'Lattafa Stop Wait Go', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
+  { id:'ara-lattafa-brush', nome:'Lattafa Happy Brush', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
+  { id:'ara-lattafa-riders', nome:'Lattafa Riders', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
+  { id:'ara-lattafa-sing', nome:'Lattafa Sing', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
+  { id:'ara-lattafa-play', nome:'Lattafa Play', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
+  // BRAND MINIATURAS FEMININAS 25ML
+  { id:'brand-212vip-branco', nome:'212 VIP Branco 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Feminino', vol:'25ml' },
+  { id:'brand-alien', nome:'Alien 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Feminino', vol:'25ml' },
+  { id:'brand-ange-secret', nome:'Ange ou Demon Le Secret 25ml', ref:'Brand Collection', cat:'brand-col', custo:36, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-vie-25', nome:'La Vie 25ml', ref:'Brand Collection', cat:'brand-col', custo:36, publico:'Feminino', vol:'25ml' },
+  { id:'brand-fame-intense', nome:'Fame Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-narciso', nome:'Narciso Rodriguez 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-nina-mad', nome:'Nina Ricci Mademoiselle 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-chance-25', nome:'Chance 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-365-fame', nome:'365 Fame 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-azzaro-wanted', nome:'Azzaro Wanted Girl 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-baccarat-extra', nome:'Baccarat Rouge Extra IT 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Feminino', vol:'25ml' },
+  { id:'brand-miss-dior', nome:'Miss Dior Blooming Bouquet 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-fantasy-25', nome:'Fantasy 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-joy-dior', nome:'Joy by Dior 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-vie-iris', nome:'Lá Vie Iris Absolu 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-olymp-abs', nome:'Olympea Absolu 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-idole-int', nome:'Idole Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-nomade', nome:'Nomade Nuit d\'Egypte Chloe 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-baccarat-rouge', nome:'Baccarat Rouge 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-bvlgari-rose', nome:'Bvlgari Rose 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-midnight', nome:'Midnight Rose 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-eternity', nome:'Eternity 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-burberry', nome:'Burberry Godness 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-bvlgari-petits', nome:'Bvlgari Petits et Mamans 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-olymp-parf', nome:'Olympea Parfum 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-dg-q', nome:'Dolce & Gabbana Q 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-irresistible', nome:'Irresistible 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-idole', nome:'Idole 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-linterdit', nome:'L\'Interdit 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-vie-edp', nome:'Lá Vie Eau de Parfum 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-nomade-chloe', nome:'Nômade Chloé 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-dylan-purple', nome:'Dylan Purple 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-dylan-blue-fem', nome:'Dylan Blue Feminino 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-dg-fem', nome:'Dolce&Gabbana Feminino 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-chance-chanel', nome:'Chance Chanel 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-scandal-gold', nome:'Scandal Gold 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-ch-fem', nome:'CH Feminino 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-flower-kenzo', nome:'Flower by Kenzo 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-jadore-white', nome:'J\'adore White 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-nuit', nome:'La Nuit 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-nina-ricci', nome:'Nina Ricci 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-libre-nue', nome:'Libre NUE 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-devotion', nome:'Devotion 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-black-opium', nome:'Black Opium 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-chance-trend', nome:'Chance Trendé 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-libre-int', nome:'Libre Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-nina-int', nome:'Nina Ricci Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-fame-parf', nome:'Fame Parfum 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-myway-glitt', nome:'My Way Glitter 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-myway-flor', nome:'My Way Floral 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-toy2-rosa', nome:'Toy 2 Rosa 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-blackxs-her', nome:'Black XS for Her 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-hypnotic', nome:'Hypnotic Poison 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-vie-int', nome:'Lá Vie L\'Eau Parfum Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-dylan-turq', nome:'Dylan Turquoise 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-dg-pour-fem', nome:'Dolce&Gabbana Pour Femme 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-scandal-abs', nome:'Scandal Absolu 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-erba-pura', nome:'Erba Pura 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-myway', nome:'My Way 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-poison-girl', nome:'Poison Girl 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-issey', nome:'Issey Miyake 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-miu-miu', nome:'Miu Miu 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-gabrielle', nome:'Gabrielle Chanel 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-angel-nova', nome:'Angel Nova 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-eros-fem', nome:'Versace Eros Feminino 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-hypnose', nome:'Hypnose 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-tiffany', nome:'Tiffany and Love for Her 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-chance-splend', nome:'Chance Splendide 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-valaya', nome:'Valaya 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-jeanpaul-class', nome:'Jean Paul Classique 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-si-rose', nome:'Sí Rose Signature 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-delina', nome:'Delina 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-212-heroes', nome:'212 Heroes 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-nuit-fleur', nome:'La Nuit Fleur 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-pure-xs', nome:'Pure XS 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-si', nome:'Sí 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-lady-pink', nome:'Lady Million Pink 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-belle', nome:'La Belle 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-jeanpaul-div', nome:'Jean Paul Divine 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-red-musk', nome:'Red Musk Sì Passione 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-rouge-royal', nome:'Rouge Royal 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-scandal-int', nome:'Scandal Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-jimmy-choo', nome:'Jimmy Choo 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-valentina', nome:'Valentina Poudree 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-delina-ed', nome:'Delina Edição Limitada 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-marly', nome:'Marlly Meliora 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-bombshell', nome:'Bombshell 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-belle-parf', nome:'La Belle Le Parfum 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-ange-demon', nome:'Ange ou Demon 25ml', ref:'Brand Collection', cat:'brand-col', custo:43, publico:'Feminino', vol:'25ml' },
+  { id:'brand-toy2', nome:'Toy 2 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Feminino', vol:'25ml' },
+  { id:'brand-angel', nome:'Angel 25ml', ref:'Brand Collection', cat:'brand-col', custo:41, publico:'Feminino', vol:'25ml' },
+  { id:'brand-la-bomba', nome:'La Bomba 25ml', ref:'Brand Collection', cat:'brand-col', custo:41, publico:'Feminino', vol:'25ml' },
+  { id:'brand-because-you', nome:'Because It\'s You 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-chasing', nome:'Chasing Butterfly 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-goodgirl-leg', nome:'Good Girl Legère 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-vg-elixir', nome:'Very Good Girl Elixir 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-goodgirl-very', nome:'Good Girl Very 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-goodgirl-sup', nome:'Good Girl Supreme 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-goodgirl-mid', nome:'Good Girl Midnight 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-vg-velvet', nome:'Very Good Velvet 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-goodgirl-fant', nome:'Good Girl Fantasy 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  { id:'brand-goodgirl-glam', nome:'Good Girl Glam 25ml', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
+  // BRAND FEMININOS GRANDE
+  { id:'brand-baccarat-100', nome:'Baccarat Rouge Extra IT 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
+  { id:'brand-coco-80', nome:'Coco Chanel 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-la-nuit-80', nome:'La Nuit 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-olymp-80', nome:'Olympea 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-goodgirl-80', nome:'Good Girl 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-light-blue', nome:'Light Blue 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-idole-100', nome:'Idole 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
+  { id:'brand-jadore-100', nome:'J\'adore 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
+  { id:'brand-scandal-80', nome:'Scandal 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-myway-100', nome:'My Way 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
+  { id:'brand-erba-pura-100', nome:'Erba Pura 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
+  { id:'brand-delina-80', nome:'Delina 80ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
+  { id:'brand-la-bomba-100', nome:'La Bomba 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
+  // BRAND MASCULINOS MINI
+  { id:'brand-vip-men', nome:'VIP Men 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Masculino', vol:'25ml' },
+  { id:'brand-pure-xs-25', nome:'Pure XS 25ml', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Masculino', vol:'25ml' },
+  { id:'brand-kilian', nome:'Kilian Angels 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-phantom-elix', nome:'Phantom Elixir 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-invictus-25', nome:'Invictus 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-diesel-brave', nome:'Diesel Only The Brave 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-bleu-25', nome:'Bleu de Chanel 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-le-male-25', nome:'Le Male 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-allure-25', nome:'Allure Masculino 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-le-male-elix', nome:'Lê Male Elixir 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-phantom-int', nome:'Phantom Intense 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-le-beau', nome:'Le Beau 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-dylan-blue-masc', nome:'Dylan Blue Masculino 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-black-xs-men', nome:'Black XS Men 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-mont-blanc-leg', nome:'Mont Blanc Legend 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-212-heroes-masc', nome:'212 Men Heroes 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-lv-imag', nome:'LV Imagination 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-toy-boy', nome:'Toy Boy 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-212-men', nome:'212 Men 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-animale', nome:'Animale 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-azzaro-most', nome:'Azzaro Wanted The Most Wanted 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-acqua-gio', nome:'Acqua di Gio 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-le-male-parf', nome:'Lê Male Le Parfum 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-invictus-plat', nome:'Invictus Platinum 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-invictus-parf', nome:'Invictus Parfum 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-joop', nome:'Joop Home 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-acqua-profumo', nome:'Acqua di Gio Profumo 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-scandal-masc', nome:'Scandal 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-versace-pour', nome:'Versace Pour Homme 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-azzaro-wanted-m', nome:'Azzaro Wanted 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-ferrari', nome:'Ferrari Black 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-pengaligons', nome:'Pengaligons 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-invictus-vic-25', nome:'Invictus Victory 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-phantom', nome:'Phantom 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-ch-men-25', nome:'CH Men 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-dg-king', nome:'D&G K The King 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-silver-scent-25', nome:'Silver Scent 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-hugo-just', nome:'Hugo Boss Just Different 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-issey-masc', nome:'Isse Miyake Masc 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-mont-spirit', nome:'Mont Blanc Spirit 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-tom-ford', nome:'Tom Ford Black Orchid 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-azzaro-pour', nome:'Azzaro Pour Homme 25ml', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
+  { id:'brand-bad-boy-25', nome:'Bad Boy 25ml', ref:'Brand Collection', cat:'brand-col', custo:41, publico:'Masculino', vol:'25ml' },
+  { id:'brand-bad-boy-elix', nome:'Bad Boy Elixir 25ml', ref:'Brand Collection', cat:'brand-col', custo:41, publico:'Masculino', vol:'25ml' },
+  { id:'brand-212-vip-black-25', nome:'212 VIP Black 25ml', ref:'Brand Collection', cat:'brand-col', custo:41, publico:'Masculino', vol:'25ml' },
+  { id:'brand-ch-men-38', nome:'CH Men 25ml', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Masculino', vol:'25ml' },
+  // BRAND MASCULINOS GRANDE
+  { id:'brand-allure-100', nome:'Allure 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-bleu-100', nome:'Bleu de Chanel 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-212-vip-black-100', nome:'212 VIP Black 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-one-million', nome:'One Million 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-vip-men-100', nome:'VIP Men 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-sauvage-100', nome:'Sauvage 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-bad-boy-100', nome:'Bad Boy 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  { id:'brand-invictus-100', nome:'Invictus 100ml', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
+  // BODY SPLASH SHIMMER
+  { id:'vs-pear-shimmer', nome:'Pear Glacê Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  { id:'vs-bare-shimmer', nome:'Bare Vanilla Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  { id:'vs-coco-shimmer', nome:'Coconut Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  { id:'vs-love-shimmer', nome:'Love Spell Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  { id:'vs-pure-shimmer', nome:'Pure Seduction Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  { id:'vs-straw-shimmer', nome:'Strawberry Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  { id:'vs-velvet-shimmer', nome:'Velvet Petals Shimmer', ref:'Victoria\'s Secret', cat:'brand', custo:52, publico:'Feminino', vol:'250ml' },
+  // BODY SPLASH NORMAL
+  { id:'vs-pear', nome:'Pear Glacê', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  { id:'vs-coco-passion', nome:'Coconut Passion', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  { id:'vs-love-spell', nome:'Love Spell', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  { id:'vs-pure-sed', nome:'Pure Seduction', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  { id:'vs-straw-champ', nome:'Strawberry & Champagne', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  { id:'vs-velvet', nome:'Velvet Petals', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  { id:'vs-bare', nome:'Bare Vanilla', ref:'Victoria\'s Secret', cat:'brand', custo:43, publico:'Feminino', vol:'250ml' },
+  // HIDRATANTES FEM
+  { id:'hid-miss-dior', nome:'Miss Dior Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-libre', nome:'Libre Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-angel', nome:'Angel Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-erba-pura', nome:'Erba Pura Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-fame', nome:'Fame Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-marina', nome:'Marina de Bourbon Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-scandal', nome:'Scandal Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-delina', nome:'Delina Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-ch-fem', nome:'CH Fem Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-la-vie', nome:'La Vie Est Belle Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-amor', nome:'Amor Amor Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-coco', nome:'Coco Chanel Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  { id:'hid-vip-rose', nome:'VIP Rosê Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Feminino', vol:'200ml' },
+  // HIDRATANTES MASC
+  { id:'hid-polo-blue', nome:'Polo Blue Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-invictus', nome:'Invictus Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-sauvage', nome:'Sauvage Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-allure-m', nome:'Allure Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-bleu', nome:'Bleu de Chanel Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-one-million', nome:'One Million Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-bad-boy', nome:'Bad Boy Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  { id:'hid-xerjoff', nome:'Xerjoff Hidratante', ref:'Brand Collection', cat:'brand', custo:35, publico:'Masculino', vol:'200ml' },
+  // BODY SPLASH BRAND
+  { id:'bs-goodgirl', nome:'Good Girl Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-delina', nome:'Delina Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-erba-pura', nome:'Erba Pura Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-la-vie', nome:'La Vie Est Belle Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-olymp', nome:'Olympea Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-la-bomba', nome:'La Bomba Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-burberry', nome:'Burberry Godness Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-scandal', nome:'Scandal Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-chloe', nome:'Chloe Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-devotion', nome:'Devotion Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-chance-splend', nome:'Chance Splendide Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-rosy', nome:'Rosy Addict Dior Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  { id:'bs-lady-million', nome:'Lady Million Body Splash', ref:'Brand Collection', cat:'brand', custo:48, publico:'Feminino', vol:'250ml' },
+  // ARABIC MINI FEM
+  { id:'arab-yara-25', nome:'Yara 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-yara-rose-25', nome:'Yara Rose 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-yara-tous-25', nome:'Yara Tous 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-amber-25', nome:'Amber 25ml', ref:'Arabic Collection', cat:'arabe', custo:50, publico:'Feminino', vol:'25ml' },
+  { id:'arab-ajwad-25', nome:'Ajwad 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-dania-25', nome:'Dania Rouge 25ml', ref:'Arabic Collection', cat:'arabe', custo:50, publico:'Feminino', vol:'25ml' },
+  { id:'arab-badee-ameth-25', nome:'Badee Al Oud Amethyst 25ml', ref:'Arabic Collection', cat:'arabe', custo:46, publico:'Feminino', vol:'25ml' },
+  { id:'arab-royal-amber-25', nome:'Royal Amber 25ml', ref:'Arabic Collection', cat:'arabe', custo:50, publico:'Feminino', vol:'25ml' },
+  { id:'arab-badee-honor-25', nome:'Badee Al Oud Honor & Glory 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-souvenir-25', nome:'Souvenir 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-emeer-25', nome:'Emeer 25ml', ref:'Arabic Collection', cat:'arabe', custo:46, publico:'Feminino', vol:'25ml' },
+  { id:'arab-yara-moi-25', nome:'Yara Moi 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-fakhar-rose-25', nome:'Fakhar Rose 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-blush-rose-25', nome:'Blush Rose 25ml', ref:'Arabic Collection', cat:'arabe', custo:46, publico:'Feminino', vol:'25ml' },
+  { id:'arab-noble-25', nome:'Noble 25ml', ref:'Arabic Collection', cat:'arabe', custo:46, publico:'Feminino', vol:'25ml' },
+  { id:'arab-sabah-25', nome:'Sabah 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-tharwah-25', nome:'Tharwah Alward 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  { id:'arab-gold-25', nome:'Gold 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
+  // ARABIC MINI MASC
+  { id:'arab-spectre-25', nome:'Spectre 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-badee-ghost-25', nome:'Bade\'e Al Oud Ghost 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-fakhar-gold-25', nome:'Fakhar Gold 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-fakhar-black-25', nome:'Fakhar Black 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-cdn-iconic-25', nome:'Club de Nuit Iconic 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-khamrah-25', nome:'Khamrah 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Unissex', vol:'25ml' },
+  { id:'arab-wazeer-25', nome:'Al Noble Wazeer 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-ameer-25', nome:'Al Noble Ameer 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-cdn-25', nome:'Club de Nuit 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-kingdom-25', nome:'The Kingdom 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-9pm-25', nome:'9PM 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+  { id:'arab-asad-25', nome:'Asad 25ml', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
+];
+
+// ================= ESTADO =================
+let vendas = JSON.parse(localStorage.getItem('perfumes_vendas') || '[]');
+let config = JSON.parse(localStorage.getItem('perfumes_config') || '{"margem":52,"frete":80,"min":10,"atacado":{"f1":{"min":10,"desc":10},"f2":{"min":30,"desc":15},"f3":{"min":50,"desc":20}}}');
+let currentCatFilter = 'todos';
+let currentSearch = '';
+let vendaAtual = null;
+
+// ================= UTILS =================
+function formatMoney(v) { return 'R$ ' + v.toFixed(2).replace('.', ','); }
+function saveVendas() { localStorage.setItem('perfumes_vendas', JSON.stringify(vendas)); }
+function saveConfig() { localStorage.setItem('perfumes_config', JSON.stringify(config)); }
+function showToast(msg, error=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (error ? ' error' : '');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ================= NAV =================
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.section).classList.add('active');
+    if (tab.dataset.section === 'dashboard') updateDashboard();
+    if (tab.dataset.section === 'vendas') updateVendas();
+    if (tab.dataset.section === 'catalogo') renderCatalogo();
+    if (tab.dataset.section === 'atacado') updateAtacadoSelect();
+    if (tab.dataset.section === 'config') updateConfig();
+  });
+});
+
+// ================= DASHBOARD =================
+function updateDashboard() {
+  const hoje = new Date().toDateString();
+  const mes = new Date().getMonth();
+  const ano = new Date().getFullYear();
+  
+  const vendasHoje = vendas.filter(v => new Date(v.data).toDateString() === hoje);
+  const vendasMes = vendas.filter(v => { const d = new Date(v.data); return d.getMonth() === mes && d.getFullYear() === ano; });
+  
+  const fatHoje = vendasHoje.reduce((s, v) => s + v.total, 0);
+  const fatMes = vendasMes.reduce((s, v) => s + v.total, 0);
+  const lucroHoje = vendasHoje.reduce((s, v) => s + v.lucro, 0);
+  const lucroMes = vendasMes.reduce((s, v) => s + v.lucro, 0);
+  const qtdHoje = vendasHoje.reduce((s, v) => s + v.qtd, 0);
+  const qtdMes = vendasMes.reduce((s, v) => s + v.qtd, 0);
+  
+  document.getElementById('stat-vendas-hoje').textContent = formatMoney(fatHoje);
+  document.getElementById('stat-qtd-hoje').textContent = qtdHoje + ' produtos';
+  document.getElementById('stat-vendas-mes').textContent = formatMoney(fatMes);
+  document.getElementById('stat-qtd-mes').textContent = qtdMes + ' produtos';
+  document.getElementById('stat-lucro-hoje').textContent = formatMoney(lucroHoje);
+  document.getElementById('stat-lucro-mes').textContent = formatMoney(lucroMes);
+  document.getElementById('stat-total-prod').textContent = produtos.length;
+  
+  const margemMedia = vendas.length > 0 ? (vendas.reduce((s, v) => s + v.margem, 0) / vendas.length).toFixed(1) : 0;
+  document.getElementById('stat-margem').textContent = margemMedia + '%';
+  
+  // Últimas vendas
+  const ultimas = vendas.slice(-10).reverse();
+  const html = ultimas.length === 0 ? '<p style="color:var(--muted);text-align:center;padding:20px;">Nenhuma venda registrada</p>' :
+    ultimas.map(v => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-weight:600;">${v.produto}</div>
+          <div style="font-size:11px;color:var(--muted);">${new Date(v.data).toLocaleString('pt-BR')} • ${v.qtd}x • ${v.tipo}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="color:var(--ok);font-weight:700;">${formatMoney(v.total)}</div>
+          <div style="font-size:11px;color:var(--accent);">Lucro: ${formatMoney(v.lucro)}</div>
+        </div>
+      </div>
+    `).join('');
+  document.getElementById('ultimas-vendas').innerHTML = html;
+}
+
+// ================= CATÁLOGO =================
+function renderCatalogo() {
+  const grid = document.getElementById('products-grid');
+  const filtered = produtos.filter(p => {
+    if (currentCatFilter !== 'todos' && p.cat !== currentCatFilter) return false;
+    if (currentSearch) {
+      const s = currentSearch.toLowerCase();
+      return p.nome.toLowerCase().includes(s) || p.ref.toLowerCase().includes(s);
+    }
+    return true;
+  });
+  
+  grid.innerHTML = filtered.map(p => {
+    const precoVenda = calcularPrecoVenda(p.custo);
+    const lucro = precoVenda - p.custo - (config.frete / config.min);
+    const margem = ((lucro / p.custo) * 100).toFixed(1);
+    return `
+      <div class="product-card">
+        <span class="cat-badge ${p.cat}">${p.cat.toUpperCase()}</span>
+        <div class="name">${p.nome}</div>
+        <div class="ref">${p.ref} • ${p.publico} • ${p.vol}</div>
+        <div class="prices">
+          <div class="price-box"><div class="lbl">CUSTO</div><div class="val cost">${formatMoney(p.custo)}</div></div>
+          <div class="price-box"><div class="lbl">VENDA</div><div class="val">${formatMoney(precoVenda)}</div></div>
+          <div class="price-box"><div class="lbl">LUCRO</div><div class="val profit">${formatMoney(lucro)}</div></div>
+          <div class="price-box"><div class="lbl">MARGEM</div><div class="val profit">${margem}%</div></div>
+        </div>
+        <div class="actions">
+          <button class="sell" onclick="abrirVenda('${p.id}')">💰 Vender</button>
+          <button onclick="abrirCalculadoraProduto('${p.id}')">🧮 Calcular</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function calcularPrecoVenda(custo) {
+  const custoFrete = config.frete / config.min;
+  const custoTotal = custo + custoFrete;
+  return custoTotal * (1 + config.margem / 100);
+}
+
+document.getElementById('search-prod').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  renderCatalogo();
+});
+
+document.querySelectorAll('.cat-filter').forEach(f => {
+  f.addEventListener('click', () => {
+    document.querySelectorAll('.cat-filter').forEach(x => x.classList.remove('active'));
+    f.classList.add('active');
+    currentCatFilter = f.dataset.cat;
+    renderCatalogo();
+  });
+});
+
+// ================= VENDA =================
+function abrirVenda(id) {
+  const p = produtos.find(x => x.id === id);
+  if (!p) return;
+  vendaAtual = p;
+  
+  const precoVenda = calcularPrecoVenda(p.custo);
+  const custoFrete = config.frete / config.min;
+  const lucroUnit = precoVenda - p.custo - custoFrete;
+  
+  document.getElementById('venda-info').innerHTML = `
+    <div style="background:var(--bg-2);padding:16px;border-radius:12px;margin-bottom:16px;">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--accent);margin-bottom:4px;">${p.nome}</div>
+      <div style="font-size:12px;color:var(--muted);">${p.ref} • ${p.publico} • ${p.vol}</div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><span style="font-size:11px;color:var(--muted);">Custo:</span> <strong>${formatMoney(p.custo)}</strong></div>
+        <div><span style="font-size:11px;color:var(--muted);">Venda:</span> <strong style="color:var(--ok);">${formatMoney(precoVenda)}</strong></div>
+        <div><span style="font-size:11px;color:var(--muted);">Lucro un.:</span> <strong style="color:var(--accent);">${formatMoney(lucroUnit)}</strong></div>
+        <div><span style="font-size:11px;color:var(--muted);">Margem:</span> <strong>${((lucroUnit/p.custo)*100).toFixed(1)}%</strong></div>
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('venda-qtd').value = 1;
+  document.getElementById('venda-cliente').value = '';
+  atualizarResumoVenda();
+  
+  document.getElementById('modal-venda').classList.add('active');
+}
+
+document.getElementById('venda-qtd').addEventListener('input', atualizarResumoVenda);
+document.getElementById('venda-tipo').addEventListener('change', atualizarResumoVenda);
+
+function atualizarResumoVenda() {
+  if (!vendaAtual) return;
+  const qtd = parseInt(document.getElementById('venda-qtd').value) || 1;
+  const tipo = document.getElementById('venda-tipo').value;
+  
+  let precoUnit = calcularPrecoVenda(vendaAtual.custo);
+  let desconto = 0;
+  
+  if (tipo === 'atacado-f1') desconto = config.atacado.f1.desc;
+  if (tipo === 'atacado-f2') desconto = config.atacado.f2.desc;
+  if (tipo === 'atacado-f3') desconto = config.atacado.f3.desc;
+  
+  precoUnit = precoUnit * (1 - desconto/100);
+  const total = precoUnit * qtd;
+  const custoFrete = config.frete / config.min;
+  const lucroUnit = precoUnit - vendaAtual.custo - custoFrete;
+  const lucroTotal = lucroUnit * qtd;
+  
+  document.getElementById('venda-resumo').innerHTML = `
+    <div class="row"><span class="lbl">Preço unitário</span><span class="val">${formatMoney(precoUnit)}</span></div>
+    <div class="row"><span class="lbl">Desconto aplicado</span><span class="val">${desconto}%</span></div>
+    <div class="row"><span class="lbl">Quantidade</span><span class="val">${qtd}</span></div>
+    <div class="row total"><span class="lbl">TOTAL DA VENDA</span><span class="val">${formatMoney(total)}</span></div>
+    <div class="row profit"><span class="lbl">LUCRO TOTAL</span><span class="val">${formatMoney(lucroTotal)}</span></div>
+  `;
+}
+
+function confirmarVenda() {
+  if (!vendaAtual) return;
+  const qtd = parseInt(document.getElementById('venda-qtd').value) || 1;
+  const tipo = document.getElementById('venda-tipo').value;
+  const cliente = document.getElementById('venda-cliente').value || 'Cliente';
+  
+  let precoUnit = calcularPrecoVenda(vendaAtual.custo);
+  let desconto = 0;
+  if (tipo === 'atacado-f1') desconto = config.atacado.f1.desc;
+  if (tipo === 'atacado-f2') desconto = config.atacado.f2.desc;
+  if (tipo === 'atacado-f3') desconto = config.atacado.f3.desc;
+  precoUnit = precoUnit * (1 - desconto/100);
+  
+  const total = precoUnit * qtd;
+  const custoFrete = config.frete / config.min;
+  const lucroUnit = precoUnit - vendaAtual.custo - custoFrete;
+  const lucroTotal = lucroUnit * qtd;
+  const margem = (lucroUnit / vendaAtual.custo) * 100;
+  
+  vendas.push({
+    data: new Date().toISOString(),
+    produto: vendaAtual.nome,
+    ref: vendaAtual.ref,
+    cat: vendaAtual.cat,
+    custo: vendaAtual.custo,
+    precoUnit: precoUnit,
+    qtd: qtd,
+    total: total,
+    lucro: lucroTotal,
+    margem: margem,
+    tipo: tipo,
+    cliente: cliente
+  });
+  
+  saveVendas();
+  fecharModal('modal-venda');
+  showToast(`✅ Venda registrada: ${formatMoney(total)}`);
+  updateDashboard();
+}
+
+function fecharModal(id) {
+  document.getElementById(id).classList.remove('active');
+  vendaAtual = null;
+}
+
+// ================= VENDAS LIST =================
+function updateVendas() {
+  const periodo = document.getElementById('filter-periodo').value;
+  const categoria = document.getElementById('filter-categoria').value;
+  
+  let filtered = [...vendas];
+  const agora = new Date();
+  
+  if (periodo === 'hoje') {
+    filtered = filtered.filter(v => new Date(v.data).toDateString() === agora.toDateString());
+  } else if (periodo === 'semana') {
+    const semanaAtras = new Date(agora - 7*24*60*60*1000);
+    filtered = filtered.filter(v => new Date(v.data) >= semanaAtras);
+  } else if (periodo === 'mes') {
+    filtered = filtered.filter(v => { const d = new Date(v.data); return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear(); });
+  }
+  
+  if (categoria !== 'todos') {
+    filtered = filtered.filter(v => v.cat === categoria);
+  }
+  
+  const fat = filtered.reduce((s, v) => s + v.total, 0);
+  const custo = filtered.reduce((s, v) => s + v.custo * v.qtd, 0);
+  const lucro = filtered.reduce((s, v) => s + v.lucro, 0);
+  const qtd = filtered.reduce((s, v) => s + v.qtd, 0);
+  
+  document.getElementById('vendas-fat').textContent = formatMoney(fat);
+  document.getElementById('vendas-custo').textContent = formatMoney(custo);
+  document.getElementById('vendas-lucro').textContent = formatMoney(lucro);
+  document.getElementById('vendas-qtd').textContent = qtd;
+  
+  const tbody = document.getElementById('vendas-tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">Nenhuma venda no período</td></tr>';
+  } else {
+    tbody.innerHTML = filtered.slice().reverse().map((v, i) => `
+      <tr>
+        <td>${new Date(v.data).toLocaleDateString('pt-BR')}</td>
+        <td><strong>${v.produto}</strong><br><small style="color:var(--muted);">${v.cliente}</small></td>
+        <td><span class="cat-badge ${v.cat}" style="font-size:9px;">${v.cat.toUpperCase()}</span></td>
+        <td>${formatMoney(v.custo * v.qtd)}</td>
+        <td><strong>${formatMoney(v.total)}</strong></td>
+        <td class="profit">${formatMoney(v.lucro)}</td>
+        <td>${v.margem.toFixed(1)}%</td>
+        <td><button class="action-btn" onclick="excluirVenda(${vendas.length - 1 - i})">🗑️</button></td>
+      </tr>
+    `).join('');
+  }
+}
+
+function excluirVenda(idx) {
+  if (confirm('Excluir esta venda?')) {
+    vendas.splice(idx, 1);
+    saveVendas();
+    updateVendas();
+    showToast('Venda excluída');
+  }
+}
+
+document.getElementById('filter-periodo').addEventListener('change', updateVendas);
+document.getElementById('filter-categoria').addEventListener('change', updateVendas);
+
+// ================= CALCULADORA =================
+function calcularPreco() {
+  const custo = parseFloat(document.getElementById('calc-custo').value) || 0;
+  const qtd = parseInt(document.getElementById('calc-qtd').value) || 1;
+  const frete = parseFloat(document.getElementById('calc-frete').value) || 0;
+  const margem = parseFloat(document.getElementById('calc-margem').value) || 0;
+  
+  const custoUnit = custo;
+  const freteUnit = frete / qtd;
+  const custoTotal = custoUnit + freteUnit;
+  const lucro = custoTotal * (margem / 100);
+  const venda = custoTotal + lucro;
+  const margemReal = ((venda - custoTotal) / custoTotal) * 100;
+  
+  document.getElementById('res-custo-unit').textContent = formatMoney(custoUnit);
+  document.getElementById('res-frete-unit').textContent = formatMoney(freteUnit);
+  document.getElementById('res-custo-total').textContent = formatMoney(custoTotal);
+  document.getElementById('res-lucro').textContent = formatMoney(lucro);
+  document.getElementById('res-venda').textContent = formatMoney(venda);
+  document.getElementById('res-margem').textContent = margemReal.toFixed(2) + '%';
+  document.getElementById('calc-resultado').style.display = 'block';
+}
+
+function simularGlobal() {
+  const margem = parseFloat(document.getElementById('sim-margem').value) || 52;
+  const frete = parseFloat(document.getElementById('sim-frete').value) || 80;
+  const min = config.min;
+  
+  const stats = { total: 0, lucroTotal: 0, fatTotal: 0 };
+  const html = produtos.slice(0, 20).map(p => {
+    const freteUnit = frete / min;
+    const custoTotal = p.custo + freteUnit;
+    const venda = custoTotal * (1 + margem/100);
+    const lucro = venda - custoTotal;
+    stats.total++;
+    stats.lucroTotal += lucro;
+    stats.fatTotal += venda;
+    return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+      <span>${p.nome}</span>
+      <span style="color:var(--accent);font-weight:600;">${formatMoney(venda)}</span>
+      <span style="color:var(--ok);">+${formatMoney(lucro)}</span>
+    </div>`;
+  }).join('');
+  
+  document.getElementById('sim-resultado').innerHTML = `
+    <div class="calc-result">
+      <div class="row total"><span class="lbl">Preço médio de venda</span><span class="val">${formatMoney(stats.fatTotal/stats.total)}</span></div>
+      <div class="row profit"><span class="lbl">Lucro médio por produto</span><span class="val">${formatMoney(stats.lucroTotal/stats.total)}</span></div>
+      <p style="color:var(--muted);font-size:12px;margin-top:12px;">Mostrando primeiros 20 produtos. Total: ${produtos.length} produtos no catálogo.</p>
+    </div>
+  `;
+}
+
+function abrirCalculadoraProduto(id) {
+  const p = produtos.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('calc-custo').value = p.custo;
+  document.querySelector('[data-section="calculadora"]').click();
+  setTimeout(calcularPreco, 100);
+}
+
+// ================= ATACADO =================
+function updateAtacadoSelect() {
+  const sel = document.getElementById('atacado-produto');
+  sel.innerHTML = produtos.map(p => `<option value="${p.id}">${p.nome} - ${formatMoney(p.custo)}</option>`).join('');
+}
+
+function salvarAtacado() {
+  config.atacado = {
+    f1: { min: parseInt(document.getElementById('atacado-f1-min').value), desc: parseFloat(document.getElementById('atacado-f1-desc').value) },
+    f2: { min: parseInt(document.getElementById('atacado-f2-min').value), desc: parseFloat(document.getElementById('atacado-f2-desc').value) },
+    f3: { min: parseInt(document.getElementById('atacado-f3-min').value), desc: parseFloat(document.getElementById('atacado-f3-desc').value) }
+  };
+  saveConfig();
+  showToast('✅ Configurações de atacado salvas');
+}
+
+function calcularAtacado() {
+  const id = document.getElementById('atacado-produto').value;
+  const qtd = parseInt(document.getElementById('atacado-qtd').value) || 1;
+  const p = produtos.find(x => x.id === id);
+  if (!p) return;
+  
+  const precoVarejo = calcularPrecoVenda(p.custo);
+  let faixa = 'Varejo';
+  let desc = 0;
+  
+  if (qtd >= config.atacado.f3.min) { faixa = 'Faixa 3'; desc = config.atacado.f3.desc; }
+  else if (qtd >= config.atacado.f2.min) { faixa = 'Faixa 2'; desc = config.atacado.f2.desc; }
+  else if (qtd >= config.atacado.f1.min) { faixa = 'Faixa 1'; desc = config.atacado.f1.desc; }
+  
+  const precoAtacado = precoVarejo * (1 - desc/100);
+  const total = precoAtacado * qtd;
+  const custoFrete = config.frete / config.min;
+  const lucroUnit = precoAtacado - p.custo - custoFrete;
+  const lucroTotal = lucroUnit * qtd;
+  
+  document.getElementById('atacado-resultado').innerHTML = `
+    <div class="row"><span class="lbl">Produto</span><span class="val">${p.nome}</span></div>
+    <div class="row"><span class="lbl">Preço varejo</span><span class="val">${formatMoney(precoVarejo)}</span></div>
+    <div class="row"><span class="lbl">Faixa aplicada</span><span class="val">${faixa} (-${desc}%)</span></div>
+    <div class="row"><span class="lbl">Preço atacado unit.</span><span class="val">${formatMoney(precoAtacado)}</span></div>
+    <div class="row"><span class="lbl">Quantidade</span><span class="val">${qtd}</span></div>
+    <div class="row total"><span class="lbl">TOTAL</span><span class="val">${formatMoney(total)}</span></div>
+    <div class="row profit"><span class="lbl">LUCRO TOTAL</span><span class="val">${formatMoney(lucroTotal)}</span></div>
+  `;
+  document.getElementById('atacado-resultado').style.display = 'block';
+}
+
+// ================= CONFIG =================
+function updateConfig() {
+  document.getElementById('cfg-margem').value = config.margem;
+  document.getElementById('cfg-frete').value = config.frete;
+  document.getElementById('cfg-min').value = config.min;
+  document.getElementById('cfg-total-prod').textContent = produtos.length;
+  document.getElementById('atacado-f1-min').value = config.atacado.f1.min;
+  document.getElementById('atacado-f1-desc').value = config.atacado.f1.desc;
+  document.getElementById('atacado-f2-min').value = config.atacado.f2.min;
+  document.getElementById('atacado-f2-desc').value = config.atacado.f2.desc;
+  document.getElementById('atacado-f3-min').value = config.atacado.f3.min;
+  document.getElementById('atacado-f3-desc').value = config.atacado.f3.desc;
+  
+  const tbody = document.getElementById('cfg-tabela-prod');
+  tbody.innerHTML = produtos.map(p => `
+    <tr>
+      <td>${p.nome}</td>
+      <td><span class="cat-badge ${p.cat}" style="font-size:9px;">${p.cat.toUpperCase()}</span></td>
+      <td><strong>${formatMoney(p.custo)}</strong></td>
+    </tr>
+  `).join('');
+}
+
+function salvarConfig() {
+  config.margem = parseFloat(document.getElementById('cfg-margem').value) || 52;
+  config.frete = parseFloat(document.getElementById('cfg-frete').value) || 80;
+  config.min = parseInt(document.getElementById('cfg-min').value) || 10;
+  saveConfig();
+  showToast('✅ Configurações salvas');
+}
+
+function exportarDados() {
+  const data = { vendas, config, exportDate: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `perfumes-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  showToast('📥 Dados exportados');
+}
+
+function importarDados(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.vendas) vendas = data.vendas;
+      if (data.config) config = data.config;
+      saveVendas();
+      saveConfig();
+      showToast('📤 Dados importados com sucesso');
+      updateDashboard();
+    } catch (err) {
+      showToast('❌ Erro ao importar', true);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function limparVendas() {
+  if (confirm('⚠️ Tem certeza que deseja apagar TODAS as vendas? Esta ação não pode ser desfeita.')) {
+    vendas = [];
+    saveVendas();
+    updateDashboard();
+    showToast('️ Vendas limpas');
+  }
+}
+
+// ================= INIT =================
+updateDashboard();
+renderCatalogo();
+</script>
+
+</body>
+</html>
