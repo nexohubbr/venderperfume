@@ -149,6 +149,7 @@
   .summary-row.profit .val { color: var(--accent); }
   .summary-row.atacado .val { color: var(--warning); font-weight: 700; }
   .summary-row.prolabore .val { color: var(--purple); font-weight: 700; }
+  .summary-row.caixa .val { color: var(--info); font-weight: 700; }
 
   /* PRODUCT SELECT LIST */
   .product-select-list { max-height: 300px; overflow-y: auto; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; margin-top: 8px; }
@@ -226,14 +227,14 @@
 
 <!-- TABS -->
 <div class="tabs no-print" id="app-tabs" style="display:none;">
-  <div class="tab active" data-section="venda" data-role="all"> Nova Venda</div>
+  <div class="tab active" data-section="venda" data-role="all">💰 Nova Venda</div>
   <div class="tab" data-section="minhas-vendas" data-role="all">📋 Minhas Vendas</div>
   <div class="tab" data-section="catalogo" data-role="admin">📚 Catálogo (Imprimir)</div>
   <div class="tab" data-section="vendas" data-role="admin">📊 Todas as Vendas</div>
   <div class="tab" data-section="fiados" data-role="admin">📒 Fiados</div>
   <div class="tab" data-section="calculadora" data-role="admin">🧮 Calculadora</div>
   <div class="tab" data-section="relatorios" data-role="admin">📈 Relatórios</div>
-  <div class="tab" data-section="config" data-role="admin">⚙️ Configurações</div>
+  <div class="tab" data-section="config" data-role="admin">️ Configurações</div>
 </div>
 
 <div class="main">
@@ -275,8 +276,8 @@
             <label>Forma de Pagamento</label>
             <select id="venda-pagamento" required>
               <option value="vista">💵 À Vista</option>
-              <option value="pix">📱 Pix</option>
-              <option value="boleto"> Boleto</option>
+              <option value="pix"> Pix</option>
+              <option value="boleto">📄 Boleto</option>
               <option value="fiado">📒 Fiado</option>
             </select>
           </div>
@@ -518,13 +519,20 @@
       </div>
     </div>
     <div class="card">
-      <h2>💰 Comissões / Pró-labore por Vendedor (%)</h2>
-      <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Percentual sobre o LUCRO de cada venda.</p>
+      <h2>💰 Distribuição do Lucro (%) - Total deve ser 100%</h2>
+      <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Percentual do lucro destinado a cada vendedor e ao caixa da empresa.</p>
       <div class="form-grid">
-        <div class="form-group"><label>Luciano (Pai)</label><input type="number" id="cfg-com-luciano" value="40" step="0.1"></div>
-        <div class="form-group"><label>Verônica (Mãe)</label><input type="number" id="cfg-com-veronica" value="40" step="0.1"></div>
-        <div class="form-group"><label>Luciano Junior</label><input type="number" id="cfg-com-junior" value="30" step="0.1"></div>
-        <div class="form-group"><label>Alexandre</label><input type="number" id="cfg-com-alexandre" value="30" step="0.1"></div>
+        <div class="form-group"><label>Luciano (Pai) %</label><input type="number" id="cfg-com-luciano" value="30" step="0.1"></div>
+        <div class="form-group"><label>Verônica (Mãe) %</label><input type="number" id="cfg-com-veronica" value="30" step="0.1"></div>
+        <div class="form-group"><label>Luciano Junior %</label><input type="number" id="cfg-com-junior" value="15" step="0.1"></div>
+        <div class="form-group"><label>Alexandre %</label><input type="number" id="cfg-com-alexandre" value="15" step="0.1"></div>
+        <div class="form-group"><label>Caixa da Empresa %</label><input type="number" id="cfg-com-caixa" value="10" step="0.1"></div>
+      </div>
+      <div class="summary-box" style="margin-top: 16px;">
+        <div class="summary-row total">
+          <span class="lbl">Total da Distribuição:</span>
+          <span class="val" id="cfg-total-com">100%</span>
+        </div>
       </div>
     </div>
     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
@@ -532,7 +540,7 @@
       <button class="btn btn-info" onclick="exportarDados()">📥 Exportar Backup</button>
       <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">📤 Importar Backup</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importarDados(event)">
-      <button class="btn btn-danger" onclick="limparTudo()">️ Limpar Tudo</button>
+      <button class="btn btn-danger" onclick="limparTudo()">🗑️ Limpar Tudo</button>
     </div>
   </div>
 
@@ -633,7 +641,13 @@ let config = JSON.parse(localStorage.getItem('pi_config') || JSON.stringify({
   frete: 80, minAtacado: 10,
   margens: { inspirado: 90, brand: 80, brandcol: 85, arabe: 50, original: 30, outros: 70 },
   atacado: { f1: 5, f2: 7, f3: 10 },
-  comissoes: { 'Luciano': 40, 'Verônica': 40, 'Luciano Junior': 30, 'Alexandre': 30 }
+  distribuicao: { 
+    'Luciano': 30, 
+    'Verônica': 30, 
+    'Luciano Junior': 15, 
+    'Alexandre': 15,
+    'Caixa': 10
+  }
 }));
 let produtoSelecionado = null;
 let vendaIdPago = null;
@@ -825,8 +839,12 @@ function confirmarVenda() {
   const custoTotalProd = produtoSelecionado.custo * qtd;
   const freteTotal = (config.frete / Math.max(qtd, 10)) * qtd;
   const lucroTotal = total - custoTotalProd - freteTotal;
-  const comissao = config.comissoes[vendedor] || 0;
-  const proLabore = lucroTotal * (comissao / 100);
+  
+  // Calcular distribuição do lucro
+  const distribuicao = {};
+  for (let nome in config.distribuicao) {
+    distribuicao[nome] = lucroTotal * (config.distribuicao[nome] / 100);
+  }
   
   const venda = {
     id: Date.now(),
@@ -846,8 +864,7 @@ function confirmarVenda() {
     cliente: cliente || 'Não informado',
     obs: obs,
     status: pagamento === 'fiado' ? 'pendente' : 'pago',
-    proLabore: proLabore,
-    comissaoPct: comissao
+    distribuicao: distribuicao
   };
   
   vendas.push(venda);
@@ -1130,16 +1147,20 @@ function calcularPrecoCalc() {
     `;
   }
   
-  // Pró-labore
+  // Distribuição do lucro
   html += `
     <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border);">
-      <h3 style="margin-bottom: 12px;">💰 Pró-labore por Vendedor (sobre lucro de ${formatMoney(lucroVarejo)})</h3>
-      <div class="summary-row prolabore"><span class="lbl">Luciano (Pai) - ${config.comissoes['Luciano']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Luciano']/100)}</span></div>
-      <div class="summary-row prolabore"><span class="lbl">Verônica (Mãe) - ${config.comissoes['Verônica']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Verônica']/100)}</span></div>
-      <div class="summary-row prolabore"><span class="lbl">Luciano Junior - ${config.comissoes['Luciano Junior']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Luciano Junior']/100)}</span></div>
-      <div class="summary-row prolabore"><span class="lbl">Alexandre - ${config.comissoes['Alexandre']}%</span><span class="val">${formatMoney(lucroVarejo * config.comissoes['Alexandre']/100)}</span></div>
-    </div>
+      <h3 style="margin-bottom: 12px;">💰 Distribuição do Lucro de ${formatMoney(lucroVarejo)}</h3>
   `;
+  
+  for (let nome in config.distribuicao) {
+    const pct = config.distribuicao[nome];
+    const valor = lucroVarejo * (pct / 100);
+    const classe = nome === 'Caixa' ? 'caixa' : 'prolabore';
+    html += `<div class="summary-row ${classe}"><span class="lbl">${nome} - ${pct}%</span><span class="val">${formatMoney(valor)}</span></div>`;
+  }
+  
+  html += `</div>`;
   
   document.getElementById('calc-resultado').innerHTML = html;
   document.getElementById('calc-resultado').style.display = 'block';
@@ -1176,21 +1197,24 @@ function gerarRelatorio() {
   `;
   
   if (tipo === 'geral' || tipo === 'vendedor') {
-    html += '<div class="card print-active"><h3>👥 Desempenho por Vendedor</h3><div class="table-container"><table><thead><tr><th>Vendedor</th><th>Vendas</th><th>Faturamento</th><th>Lucro</th><th>Pró-labore</th></tr></thead><tbody>';
-    ['Luciano', 'Verônica', 'Luciano Junior', 'Alexandre'].forEach(v => {
-      const vV = filtered.filter(x => x.vendedor === v && x.status === 'pago');
-      const vFat = vV.reduce((s, x) => s + x.total, 0);
-      const vLucro = vV.reduce((s, x) => s + x.lucroTotal, 0);
-      const vCom = config.comissoes[v] || 0;
-      const vPro = vLucro * (vCom / 100);
-      html += `<tr><td><strong>${v}</strong></td><td>${vV.length}</td><td>${formatMoney(vFat)}</td><td style="color: var(--ok);">${formatMoney(vLucro)}</td><td style="color: var(--accent); font-weight: 700;">${formatMoney(vPro)}</td></tr>`;
-    });
+    html += '<div class="card print-active"><h3> Distribuição do Lucro por Vendedor e Caixa</h3><div class="table-container"><table><thead><tr><th>Destinatário</th><th>%</th><th>Valor</th></tr></thead><tbody>';
+    
+    let totalDistribuido = 0;
+    for (let nome in config.distribuicao) {
+      const pct = config.distribuicao[nome];
+      const valor = lucro * (pct / 100);
+      totalDistribuido += valor;
+      const classe = nome === 'Caixa' ? 'caixa' : 'prolabore';
+      html += `<tr class="${classe}"><td><strong>${nome}</strong></td><td>${pct}%</td><td style="font-weight: 700;">${formatMoney(valor)}</td></tr>`;
+    }
+    
+    html += `<tr class="total"><td><strong>TOTAL DISTRIBUÍDO</strong></td><td><strong>100%</strong></td><td style="font-weight: 700; color: var(--ok);">${formatMoney(totalDistribuido)}</td></tr>`;
     html += '</tbody></table></div></div>';
   }
   
-  html += '<div class="card print-active"><h3>📋 Detalhamento das Vendas</h3><div class="table-container"><table><thead><tr><th>Data</th><th>Produto</th><th>Cliente</th><th>Vendedor</th><th>Qtd</th><th>Total</th><th>Lucro</th><th>Pró-labore</th></tr></thead><tbody>';
+  html += '<div class="card print-active"><h3> Detalhamento das Vendas</h3><div class="table-container"><table><thead><tr><th>Data</th><th>Produto</th><th>Cliente</th><th>Vendedor</th><th>Qtd</th><th>Total</th><th>Lucro</th></tr></thead><tbody>';
   filtered.slice().reverse().forEach(v => {
-    html += `<tr><td>${formatShortDate(v.data)}</td><td>${v.produto}</td><td>${v.cliente}</td><td>${v.vendedor}</td><td>${v.qtd}</td><td>${formatMoney(v.total)}</td><td style="color: var(--ok);">${formatMoney(v.lucroTotal)}</td><td style="color: var(--accent);">${formatMoney(v.proLabore || 0)}</td></tr>`;
+    html += `<tr><td>${formatShortDate(v.data)}</td><td>${v.produto}</td><td>${v.cliente}</td><td>${v.vendedor}</td><td>${v.qtd}</td><td>${formatMoney(v.total)}</td><td style="color: var(--ok);">${formatMoney(v.lucroTotal)}</td></tr>`;
   });
   html += '</tbody></table></div></div>';
   
@@ -1218,13 +1242,51 @@ function loadConfig() {
   document.getElementById('cfg-desc-f1').value = config.atacado.f1;
   document.getElementById('cfg-desc-f2').value = config.atacado.f2;
   document.getElementById('cfg-desc-f3').value = config.atacado.f3;
-  document.getElementById('cfg-com-luciano').value = config.comissoes['Luciano'];
-  document.getElementById('cfg-com-veronica').value = config.comissoes['Verônica'];
-  document.getElementById('cfg-com-junior').value = config.comissoes['Luciano Junior'];
-  document.getElementById('cfg-com-alexandre').value = config.comissoes['Alexandre'];
+  document.getElementById('cfg-com-luciano').value = config.distribuicao['Luciano'];
+  document.getElementById('cfg-com-veronica').value = config.distribuicao['Verônica'];
+  document.getElementById('cfg-com-junior').value = config.distribuicao['Luciano Junior'];
+  document.getElementById('cfg-com-alexandre').value = config.distribuicao['Alexandre'];
+  document.getElementById('cfg-com-caixa').value = config.distribuicao['Caixa'];
+  atualizarTotalComissoes();
 }
 
+function atualizarTotalComissoes() {
+  const luciano = parseFloat(document.getElementById('cfg-com-luciano').value) || 0;
+  const veronica = parseFloat(document.getElementById('cfg-com-veronica').value) || 0;
+  const junior = parseFloat(document.getElementById('cfg-com-junior').value) || 0;
+  const alexandre = parseFloat(document.getElementById('cfg-com-alexandre').value) || 0;
+  const caixa = parseFloat(document.getElementById('cfg-com-caixa').value) || 0;
+  const total = luciano + veronica + junior + alexandre + caixa;
+  
+  const totalEl = document.getElementById('cfg-total-com');
+  totalEl.textContent = total.toFixed(1) + '%';
+  
+  if (Math.abs(total - 100) > 0.1) {
+    totalEl.style.color = 'var(--danger)';
+    totalEl.textContent += ' ️ Deve ser 100%';
+  } else {
+    totalEl.style.color = 'var(--ok)';
+  }
+}
+
+// Adicionar listeners para atualização em tempo real
+['cfg-com-luciano', 'cfg-com-veronica', 'cfg-com-junior', 'cfg-com-alexandre', 'cfg-com-caixa'].forEach(id => {
+  document.getElementById(id).addEventListener('input', atualizarTotalComissoes);
+});
+
 function salvarConfig() {
+  const luciano = parseFloat(document.getElementById('cfg-com-luciano').value) || 0;
+  const veronica = parseFloat(document.getElementById('cfg-com-veronica').value) || 0;
+  const junior = parseFloat(document.getElementById('cfg-com-junior').value) || 0;
+  const alexandre = parseFloat(document.getElementById('cfg-com-alexandre').value) || 0;
+  const caixa = parseFloat(document.getElementById('cfg-com-caixa').value) || 0;
+  const total = luciano + veronica + junior + alexandre + caixa;
+  
+  if (Math.abs(total - 100) > 0.1) {
+    showToast(`⚠️ Total da distribuição é ${total.toFixed(1)}%. Deve ser 100%!`, true);
+    return;
+  }
+  
   config.frete = parseFloat(document.getElementById('cfg-frete').value) || 80;
   config.minAtacado = parseInt(document.getElementById('cfg-min-atacado').value) || 10;
   config.margens = {
@@ -1240,11 +1302,12 @@ function salvarConfig() {
     f2: parseFloat(document.getElementById('cfg-desc-f2').value) || 7,
     f3: parseFloat(document.getElementById('cfg-desc-f3').value) || 10
   };
-  config.comissoes = {
-    'Luciano': parseFloat(document.getElementById('cfg-com-luciano').value) || 40,
-    'Verônica': parseFloat(document.getElementById('cfg-com-veronica').value) || 40,
-    'Luciano Junior': parseFloat(document.getElementById('cfg-com-junior').value) || 30,
-    'Alexandre': parseFloat(document.getElementById('cfg-com-alexandre').value) || 30
+  config.distribuicao = {
+    'Luciano': luciano,
+    'Verônica': veronica,
+    'Luciano Junior': junior,
+    'Alexandre': alexandre,
+    'Caixa': caixa
   };
   saveConfig();
   showToast('✅ Configurações salvas!');
