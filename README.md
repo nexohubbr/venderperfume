@@ -1,1 +1,1 @@
-https://nexohubbr.github.io/venderperfume
+https://nexohubbr.github.io/venderperfume/vendas.html
