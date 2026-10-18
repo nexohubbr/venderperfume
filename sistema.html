@@ -19,29 +19,17 @@
   a { color: inherit; text-decoration: none; } img { max-width: 100%; display: block; }
   button { font-family: 'Inter', sans-serif; }
 
-  /* LOGIN SCREEN */
-  #login-screen {
-    position: fixed; inset: 0; background: var(--bg); z-index: 1000;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .login-box {
-    background: var(--card); border: 1px solid var(--border); border-radius: 18px;
-    padding: 40px; width: 100%; max-width: 400px; text-align: center;
-  }
+  @page { size: A4 portrait; margin: 8mm 5mm 8mm 5mm; }
+
+  /* LOGIN */
+  #login-screen { position: fixed; inset: 0; background: var(--bg); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+  .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 40px; width: 100%; max-width: 400px; text-align: center; }
   .login-box h2 { font-family: 'Playfair Display', serif; color: var(--accent); margin-bottom: 24px; font-size: 28px; }
-  .login-box input {
-    width: 100%; padding: 12px 16px; background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--text); font-size: 14px; margin-bottom: 16px;
-  }
+  .login-box input { width: 100%; padding: 12px 16px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; margin-bottom: 16px; }
   .login-box input:focus { outline: none; border-color: var(--accent); }
 
   /* HEADER */
-  .app-header {
-    background: linear-gradient(135deg, #1a1510, #0a0808);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
-    position: sticky; top: 0; z-index: 100;
-  }
+  .app-header { background: linear-gradient(135deg, #1a1510, #0a0808); border-bottom: 1px solid var(--border); padding: 16px 24px; position: sticky; top: 0; z-index: 100; }
   .header-content { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   .logo { font-family: 'Playfair Display', serif; font-weight: 700; letter-spacing: 3px; font-size: 22px; color: var(--accent); }
   .logo span { color: var(--text); font-size: 14px; letter-spacing: 1px; margin-left: 8px; font-family: 'Inter', sans-serif; font-weight: 400; }
@@ -49,16 +37,8 @@
   .btn-logout { background: var(--danger); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
 
   /* TABS */
-  .tabs {
-    display: flex; gap: 8px; padding: 16px 24px;
-    background: var(--bg-2); border-bottom: 1px solid var(--border);
-    overflow-x: auto; max-width: 1400px; margin: 0 auto;
-  }
-  .tab {
-    padding: 10px 20px; background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; color: var(--muted); font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all .2s; white-space: nowrap;
-  }
+  .tabs { display: flex; gap: 8px; padding: 16px 24px; background: var(--bg-2); border-bottom: 1px solid var(--border); overflow-x: auto; max-width: 1400px; margin: 0 auto; }
+  .tab { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
   .tab:hover { border-color: var(--accent); color: var(--text); }
   .tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
 
@@ -68,7 +48,7 @@
   .section.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* CARDS & STATS */
+  /* CARDS */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
   .card h2 { font-family: 'Playfair Display', serif; color: var(--accent); margin-bottom: 16px; font-size: 22px; }
   .card h3 { font-family: 'Playfair Display', serif; color: var(--accent); margin-bottom: 12px; font-size: 18px; }
@@ -84,14 +64,11 @@
   .stat-card.blue .value { color: var(--info); }
   .stat-card.orange .value { color: var(--warning); }
 
-  /* FORMS & INPUTS */
+  /* FORMS */
   .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
   .form-group { display: flex; flex-direction: column; gap: 6px; }
   .form-group label { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; }
-  .form-group input, .form-group select, .form-group textarea {
-    padding: 10px 14px; background: var(--bg-2); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
-  }
+  .form-group input, .form-group select, .form-group textarea { padding: 10px 14px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif; }
   .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
   .search-box { width: 100%; padding: 12px 16px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 14px; margin-bottom: 16px; }
   .search-box:focus { outline: none; border-color: var(--accent); }
@@ -126,7 +103,6 @@
   .badge-pix { background: rgba(167,139,250,0.15); color: var(--purple); }
   .badge-boleto { background: rgba(245,158,11,0.15); color: var(--warning); }
   .badge-fiado { background: rgba(239,68,68,0.15); color: var(--danger); }
-  .badge-atacado { background: rgba(201,169,97,0.15); color: var(--accent); }
   .badge-vendedor { background: rgba(201,169,97,0.15); color: var(--accent); }
 
   /* MODAL */
@@ -139,7 +115,7 @@
   .modal-close:hover { background: var(--bg-2); color: var(--text); }
   .modal-body { padding: 24px; }
 
-  /* SUMMARY BOX */
+  /* SUMMARY */
   .summary-box { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 16px; }
   .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
   .summary-row:last-child { border-bottom: none; }
@@ -152,7 +128,7 @@
   .summary-row.prolabore .val { color: var(--purple); font-weight: 700; }
   .summary-row.caixa .val { color: var(--info); font-weight: 700; }
 
-  /* PRODUCT SELECT LIST */
+  /* PRODUCT SELECT */
   .product-select-list { max-height: 300px; overflow-y: auto; background: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; margin-top: 8px; }
   .product-select-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background .2s; }
   .product-select-item:hover { background: var(--card); }
@@ -165,36 +141,53 @@
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: var(--danger); color: #fff; }
 
-  /* CHECKBOX LIST FOR CATALOG PRINT */
+  /* CATALOG */
   .catalog-print-list { max-height: 400px; overflow-y: auto; }
   .catalog-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid var(--border); }
   .catalog-item:hover { background: var(--bg-2); }
   .catalog-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); }
 
-  /* PRINT STYLES */
+  /* CATALOG PREVIEW */
+  .catalog-preview { background: #fff; color: #000; padding: 24px; border-radius: 14px; margin-top: 16px; display: none; }
+  .catalog-preview.active { display: block; }
+  .catalog-preview h1 { font-family: 'Playfair Display', serif; font-size: 24px; text-align: center; margin-bottom: 8px; color: #000; }
+  .catalog-preview .subtitle { text-align: center; font-size: 12px; color: #666; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #000; }
+  .catalog-preview table { width: 100%; border-collapse: collapse; background: #fff; }
+  .catalog-preview th { background: #f0f0f0; color: #000; border: 1px solid #ccc; padding: 6px 4px; font-size: 9px; }
+  .catalog-preview td { border: 1px solid #ddd; padding: 5px 4px; font-size: 10px; color: #000; }
+
+  /* PRINT */
   @media print {
-    body { background: #fff !important; color: #000 !important; }
-    #login-screen, .app-header, .tabs, .no-print, button, .modal-overlay { display: none !important; }
-    .main { padding: 0 !important; max-width: 100% !important; }
-    .section { display: block !important; }
-    .section:not(.print-active) { display: none !important; }
-    .card { border: 1px solid #ddd !important; background: #fff !important; break-inside: avoid; color: #000 !important; }
-    .card h2, .card h3 { color: #000 !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    html, body { background: #fff !important; color: #000 !important; margin: 0 !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
+    #login-screen, .app-header, .tabs, .no-print, button, .modal-overlay, .toast, .catalog-print-list, .card:first-child { display: none !important; }
+    .main { padding: 0 !important; max-width: 100% !important; margin: 0 !important; }
+    .section { display: none !important; }
+    .section.print-active { display: block !important; }
+    .card { border: none !important; background: #fff !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+    .card h2, .card h3 { color: #000 !important; margin-bottom: 8px !important; }
     .stat-card { border: 1px solid #ddd !important; background: #fff !important; }
     .stat-card .value { color: #000 !important; }
     .stat-card .label { color: #666 !important; }
-    table { border: 1px solid #ddd !important; }
-    th { background: #f5f5f5 !important; color: #000 !important; }
-    td { color: #000 !important; border-bottom: 1px solid #ddd !important; }
-    .print-header { display: block !important; text-align: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #000; }
-    .print-header h1 { font-family: 'Playfair Display', serif; font-size: 24px; margin-bottom: 8px; color: #000 !important; }
-    .print-header p { font-size: 12px; color: #666 !important; }
+    table { width: 100% !important; border-collapse: collapse !important; font-size: 9px !important; }
+    th { background: #f0f0f0 !important; color: #000 !important; padding: 4px 3px !important; font-size: 8px !important; border: 1px solid #ccc !important; }
+    td { color: #000 !important; border: 1px solid #ddd !important; padding: 3px 3px !important; font-size: 8px !important; word-wrap: break-word !important; }
+    tr { page-break-inside: avoid !important; break-inside: avoid !important; }
+    thead { display: table-header-group !important; }
+    .print-header { display: block !important; text-align: center; margin-bottom: 10px !important; padding-bottom: 8px !important; border-bottom: 2px solid #000 !important; }
+    .print-header h1 { font-family: 'Playfair Display', serif; font-size: 18px !important; margin-bottom: 4px !important; color: #000 !important; }
+    .print-header p { font-size: 10px !important; color: #666 !important; margin: 2px 0 !important; }
     .summary-box { background: #fff !important; border: 1px solid #ddd !important; color: #000 !important; }
-    .summary-row { border-bottom: 1px solid #ddd !important; color: #000 !important; }
+    .summary-row { border-bottom: 1px solid #ddd !important; color: #000 !important; font-size: 10px !important; padding: 4px 0 !important; }
     .summary-row .lbl { color: #666 !important; }
     .summary-row .val { color: #000 !important; }
     .summary-row.total .val { color: #000 !important; font-weight: 700 !important; }
-    .badge { border: 1px solid #999 !important; background: transparent !important; color: #000 !important; }
+    .badge { border: 1px solid #999 !important; background: transparent !important; color: #000 !important; font-size: 8px !important; padding: 1px 4px !important; }
+    .catalog-preview { display: block !important; background: #fff !important; color: #000 !important; padding: 0 !important; border: none !important; }
+    .catalog-preview h1 { font-family: 'Playfair Display', serif; font-size: 18px !important; text-align: center; margin-bottom: 4px !important; color: #000 !important; }
+    .catalog-preview .subtitle { text-align: center; font-size: 10px !important; color: #666 !important; margin-bottom: 8px !important; padding-bottom: 6px !important; border-bottom: 2px solid #000 !important; }
+    #relatorio-content { display: block !important; }
+    #relatorio-content .card { page-break-inside: avoid !important; break-inside: avoid !important; }
   }
   .print-header { display: none; }
 
@@ -208,7 +201,6 @@
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-box">
     <h2>Perfumes Itabuna</h2>
@@ -223,7 +215,6 @@
   </div>
 </div>
 
-<!-- APP HEADER -->
 <div class="app-header" id="app-header" style="display:none;">
   <div class="header-content">
     <div class="logo">PERFUMES <span>• ITABUNA • SISTEMA</span></div>
@@ -234,22 +225,20 @@
   </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs no-print" id="app-tabs" style="display:none;">
   <div class="tab active" data-section="venda" data-role="all">💰 Nova Venda</div>
   <div class="tab" data-section="minhas-vendas" data-role="all">📋 Minhas Vendas</div>
   <div class="tab" data-section="catalogo" data-role="admin">📚 Catálogo (Imprimir)</div>
   <div class="tab" data-section="vendas" data-role="admin">📊 Todas as Vendas</div>
   <div class="tab" data-section="fiados" data-role="admin">📒 Fiados</div>
-  <div class="tab" data-section="calculadora" data-role="admin">🧮 Calculadora</div>
+  <div class="tab" data-section="calculadora" data-role="admin"> Calculadora</div>
   <div class="tab" data-section="relatorios" data-role="admin">📈 Relatórios</div>
-  <div class="tab" data-section="config" data-role="admin">️ Configurações</div>
+  <div class="tab" data-section="config" data-role="admin">⚙️ Configurações</div>
 </div>
 
 <div class="main">
-  <!-- PRINT HEADER -->
   <div class="print-header">
-    <h1>Perfumes Itabuna - Tabela de Preços</h1>
+    <h1>Perfumes Itabuna</h1>
     <p id="print-subtitle"></p>
     <p>Gerado em: <span id="print-data"></span></p>
   </div>
@@ -263,7 +252,6 @@
         <input type="text" class="search-box" id="venda-search" placeholder="Digite o nome ou referência do produto...">
         <div class="product-select-list" id="venda-product-list"></div>
       </div>
-
       <div id="venda-selected-product" style="display:none;">
         <div class="summary-box" style="margin-bottom: 16px;">
           <div class="summary-row"><span class="lbl">Produto:</span><span class="val" id="sel-prod-name" style="color: var(--accent);"></span></div>
@@ -271,38 +259,17 @@
           <div class="summary-row"><span class="lbl">Custo unitário:</span><span class="val" id="sel-prod-custo"></span></div>
           <div class="summary-row"><span class="lbl">Preço de Varejo:</span><span class="val" id="sel-prod-varejo"></span></div>
         </div>
-
         <div class="form-grid">
-          <div class="form-group">
-            <label>Vendedor</label>
-            <select id="venda-vendedor" required></select>
-          </div>
-          <div class="form-group">
-            <label>Quantidade</label>
-            <input type="number" id="venda-qtd" value="1" min="1" required>
-          </div>
-          <div class="form-group">
-            <label>Forma de Pagamento</label>
-            <select id="venda-pagamento" required>
-              <option value="vista">💵 À Vista</option>
-              <option value="pix"> Pix</option>
-              <option value="boleto">📄 Boleto</option>
-              <option value="fiado">📒 Fiado</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Nome do Cliente</label>
-            <input type="text" id="venda-cliente" placeholder="Opcional">
-          </div>
+          <div class="form-group"><label>Vendedor</label><select id="venda-vendedor" required></select></div>
+          <div class="form-group"><label>Quantidade</label><input type="number" id="venda-qtd" value="1" min="1" required></div>
+          <div class="form-group"><label>Forma de Pagamento</label><select id="venda-pagamento" required><option value="vista">💵 À Vista</option><option value="pix">📱 Pix</option><option value="boleto"> Boleto</option><option value="fiado">📒 Fiado</option></select></div>
+          <div class="form-group"><label>Nome do Cliente</label><input type="text" id="venda-cliente" placeholder="Opcional"></div>
         </div>
-
         <div class="form-group" style="margin-top: 16px;">
           <label>Observações (endereço, telefone, detalhes do fiado)</label>
           <textarea id="venda-obs" placeholder="Ex: Rua tal, nº 123, tel: 73 99999-9999"></textarea>
         </div>
-
         <div class="summary-box" id="venda-resumo"></div>
-
         <div style="display: flex; gap: 12px; margin-top: 16px;">
           <button class="btn btn-ghost" onclick="cancelarVenda()">Cancelar</button>
           <button class="btn btn-success btn-block" onclick="confirmarVenda()">✅ Confirmar Venda</button>
@@ -316,97 +283,46 @@
     <div class="card">
       <h2>📋 Minhas Vendas</h2>
       <div class="table-container">
-        <table>
-          <thead>
-            <tr><th>Data</th><th>Produto</th><th>Qtd</th><th>Pagto</th><th>Status</th><th>Total</th><th>Lucro</th></tr>
-          </thead>
-          <tbody id="minhas-vendas-tbody"></tbody>
-        </table>
+        <table><thead><tr><th>Data</th><th>Produto</th><th>Qtd</th><th>Pagto</th><th>Status</th><th>Total</th><th>Lucro</th></tr></thead><tbody id="minhas-vendas-tbody"></tbody></table>
       </div>
     </div>
   </div>
 
-  <!-- CATÁLOGO PARA IMPRESSÃO -->
+  <!-- CATÁLOGO -->
   <div class="section" id="catalogo">
     <div class="card no-print">
       <h2>📚 Catálogo para Impressão</h2>
       <div class="form-grid">
-        <div class="form-group">
-          <label>Tipo de Preço</label>
-          <select id="cat-tipo-preco">
-            <option value="varejo">Preço de Varejo</option>
-            <option value="atacado1">Atacado Faixa 1 (5% off)</option>
-            <option value="atacado2">Atacado Faixa 2 (7% off)</option>
-            <option value="atacado3">Atacado Faixa 3 (10% off)</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Categoria</label>
-          <select id="cat-categoria">
-            <option value="todos">Todas</option>
-            <option value="inspirado">Inspirados</option>
-            <option value="brand">Brand</option>
-            <option value="brand-col">Brand Collection</option>
-            <option value="arabe">Árabes</option>
-            <option value="original">Originais</option>
-            <option value="outros">Outros</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Tipo de Preço</label><select id="cat-tipo-preco"><option value="varejo">Preço de Varejo</option><option value="atacado1">Atacado Faixa 1 (5% off)</option><option value="atacado2">Atacado Faixa 2 (7% off)</option><option value="atacado3">Atacado Faixa 3 (10% off)</option></select></div>
+        <div class="form-group"><label>Categoria</label><select id="cat-categoria"><option value="todos">Todas</option><option value="inspirado">Inspirados</option><option value="brand">Brand</option><option value="brand-col">Brand Collection</option><option value="arabe">Árabes</option><option value="original">Originais</option><option value="outros">Outros</option></select></div>
       </div>
       <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
         <button class="btn btn-info" onclick="selecionarTodosCatalogo()">✅ Selecionar Todos</button>
-        <button class="btn btn-ghost" onclick="limparSelecaoCatalogo()">❌ Limpar Seleção</button>
-        <button class="btn btn-primary" onclick="imprimirCatalogo()">🖨️ Imprimir Selecionados</button>
+        <button class="btn btn-ghost" onclick="limparSelecaoCatalogo()"> Limpar Seleção</button>
+        <button class="btn btn-primary" onclick="gerarPreviewCatalogo()">👁️ Gerar Preview</button>
+        <button class="btn btn-success" onclick="imprimirCatalogo()">🖨️ Imprimir</button>
       </div>
     </div>
     <div class="card">
       <h2>Produtos Disponíveis (<span id="cat-total">0</span>)</h2>
       <div class="catalog-print-list" id="catalogo-lista"></div>
     </div>
+    <div class="catalog-preview" id="catalogo-preview">
+      <h1>Perfumes Itabuna - Tabela de Preços</h1>
+      <div class="subtitle" id="catalogo-preview-subtitle"></div>
+      <div id="catalogo-preview-content"></div>
+    </div>
   </div>
 
-  <!-- TODAS AS VENDAS (ADMIN) -->
+  <!-- TODAS AS VENDAS -->
   <div class="section" id="vendas">
     <div class="card no-print">
       <h2>📊 Filtro de Vendas</h2>
       <div class="form-grid">
-        <div class="form-group">
-          <label>Período</label>
-          <select id="filter-periodo">
-            <option value="hoje">Hoje</option>
-            <option value="semana">Esta Semana</option>
-            <option value="mes" selected>Este Mês</option>
-            <option value="tudo">Tudo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Vendedor</label>
-          <select id="filter-vendedor">
-            <option value="todos">Todos</option>
-            <option value="Luciano">Luciano (Pai)</option>
-            <option value="Verônica">Verônica (Mãe)</option>
-            <option value="Luciano Junior">Luciano Junior</option>
-            <option value="Alexandre">Alexandre</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Pagamento</label>
-          <select id="filter-pagamento">
-            <option value="todos">Todos</option>
-            <option value="vista">À Vista</option>
-            <option value="pix">Pix</option>
-            <option value="boleto">Boleto</option>
-            <option value="fiado">Fiado</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select id="filter-status">
-            <option value="todos">Todos</option>
-            <option value="pago">Pago</option>
-            <option value="pendente">Pendente</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Período</label><select id="filter-periodo"><option value="hoje">Hoje</option><option value="semana">Esta Semana</option><option value="mes" selected>Este Mês</option><option value="tudo">Tudo</option></select></div>
+        <div class="form-group"><label>Vendedor</label><select id="filter-vendedor"><option value="todos">Todos</option><option value="Luciano">Luciano (Pai)</option><option value="Verônica">Verônica (Mãe)</option><option value="Luciano Junior">Luciano Junior</option><option value="Alexandre">Alexandre</option></select></div>
+        <div class="form-group"><label>Pagamento</label><select id="filter-pagamento"><option value="todos">Todos</option><option value="vista">À Vista</option><option value="pix">Pix</option><option value="boleto">Boleto</option><option value="fiado">Fiado</option></select></div>
+        <div class="form-group"><label>Status</label><select id="filter-status"><option value="todos">Todos</option><option value="pago">Pago</option><option value="pendente">Pendente</option></select></div>
       </div>
     </div>
     <div class="stats-grid no-print">
@@ -416,12 +332,7 @@
       <div class="stat-card orange"><div class="label">Qtd Vendida</div><div class="value" id="vendas-qtd">0</div></div>
     </div>
     <div class="table-container">
-      <table>
-        <thead>
-          <tr><th>Data</th><th>Produto</th><th>Vendedor</th><th>Qtd</th><th>Pagto</th><th>Status</th><th>Total</th><th>Lucro</th><th class="no-print">Ações</th></tr>
-        </thead>
-        <tbody id="vendas-tbody"></tbody>
-      </table>
+      <table><thead><tr><th>Data</th><th>Produto</th><th>Vendedor</th><th>Qtd</th><th>Pagto</th><th>Status</th><th>Total</th><th>Lucro</th><th class="no-print">Ações</th></tr></thead><tbody id="vendas-tbody"></tbody></table>
     </div>
   </div>
 
@@ -435,17 +346,14 @@
       </div>
     </div>
     <div class="table-container">
-      <table>
-        <thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Vendedor</th><th>Valor</th><th>Obs</th><th>Status</th><th class="no-print">Ações</th></tr></thead>
-        <tbody id="fiados-tbody"></tbody>
-      </table>
+      <table><thead><tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Vendedor</th><th>Valor</th><th>Obs</th><th>Status</th><th class="no-print">Ações</th></tr></thead><tbody id="fiados-tbody"></tbody></table>
     </div>
   </div>
 
   <!-- CALCULADORA -->
   <div class="section" id="calculadora">
     <div class="card">
-      <h2>🧮 Calculadora de Preço e Margem</h2>
+      <h2> Calculadora de Preço e Margem</h2>
       <div class="form-grid">
         <div class="form-group"><label>Custo do Produto (R$)</label><input type="number" id="calc-custo" step="0.01" value="13"></div>
         <div class="form-group"><label>Quantidade no Pedido</label><input type="number" id="calc-qtd" value="10" min="1"></div>
@@ -462,33 +370,9 @@
     <div class="card no-print">
       <h2>📈 Gerar Relatório</h2>
       <div class="form-grid">
-        <div class="form-group">
-          <label>Período</label>
-          <select id="rel-periodo">
-            <option value="hoje">Hoje</option>
-            <option value="semana">Esta Semana</option>
-            <option value="mes" selected>Este Mês</option>
-            <option value="tudo">Tudo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Vendedor</label>
-          <select id="rel-vendedor">
-            <option value="todos">Todos</option>
-            <option value="Luciano">Luciano (Pai)</option>
-            <option value="Verônica">Verônica (Mãe)</option>
-            <option value="Luciano Junior">Luciano Junior</option>
-            <option value="Alexandre">Alexandre</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Tipo de Relatório</label>
-          <select id="rel-tipo">
-            <option value="geral">Geral Completo</option>
-            <option value="vendedor">Por Vendedor</option>
-            <option value="produto">Por Produto</option>
-          </select>
-        </div>
+        <div class="form-group"><label>Período</label><select id="rel-periodo"><option value="hoje">Hoje</option><option value="semana">Esta Semana</option><option value="mes" selected>Este Mês</option><option value="tudo">Tudo</option></select></div>
+        <div class="form-group"><label>Vendedor</label><select id="rel-vendedor"><option value="todos">Todos</option><option value="Luciano">Luciano (Pai)</option><option value="Verônica">Verônica (Mãe)</option><option value="Luciano Junior">Luciano Junior</option><option value="Alexandre">Alexandre</option></select></div>
+        <div class="form-group"><label>Tipo de Relatório</label><select id="rel-tipo"><option value="geral">Geral Completo</option><option value="vendedor">Por Vendedor</option><option value="produto">Por Produto</option></select></div>
       </div>
       <div style="display: flex; gap: 12px; margin-top: 16px;">
         <button class="btn btn-primary" onclick="gerarRelatorio()">📊 Gerar</button>
@@ -508,7 +392,7 @@
       </div>
     </div>
     <div class="card">
-      <h2>💹 Margens por Categoria (%)</h2>
+      <h2> Margens por Categoria (%)</h2>
       <div class="form-grid">
         <div class="form-group"><label>Inspirados</label><input type="number" id="cfg-margem-inspirado" value="90" step="0.1"></div>
         <div class="form-group"><label>Brand</label><input type="number" id="cfg-margem-brand" value="80" step="0.1"></div>
@@ -519,7 +403,7 @@
       </div>
     </div>
     <div class="card">
-      <h2>🤝 Descontos de Atacado (%)</h2>
+      <h2> Descontos de Atacado (%)</h2>
       <p style="color: var(--muted); font-size: 13px; margin-bottom: 16px;">Desconto aplicado sobre o preço de varejo calculado.</p>
       <div class="form-grid">
         <div class="form-group"><label>Faixa 1 (10-29 un) - Desconto %</label><input type="number" id="cfg-desc-f1" value="5" step="0.1"></div>
@@ -538,10 +422,7 @@
         <div class="form-group"><label>Caixa da Empresa %</label><input type="number" id="cfg-com-caixa" value="10" step="0.1"></div>
       </div>
       <div class="summary-box" style="margin-top: 16px;">
-        <div class="summary-row total">
-          <span class="lbl">Total da Distribuição:</span>
-          <span class="val" id="cfg-total-com">100%</span>
-        </div>
+        <div class="summary-row total"><span class="lbl">Total da Distribuição:</span><span class="val" id="cfg-total-com">100%</span></div>
       </div>
     </div>
     <div style="display: flex; gap: 12px; flex-wrap: wrap;">
@@ -549,10 +430,9 @@
       <button class="btn btn-info" onclick="exportarDados()">📥 Exportar Backup</button>
       <button class="btn btn-ghost" onclick="document.getElementById('import-file').click()">📤 Importar Backup</button>
       <input type="file" id="import-file" accept=".json" style="display:none" onchange="importarDados(event)">
-      <button class="btn btn-danger" onclick="limparTudo()">🗑️ Limpar Tudo</button>
+      <button class="btn btn-danger" onclick="limparTudo()">️ Limpar Tudo</button>
     </div>
   </div>
-
 </div>
 
 <!-- MODAL RECEBER FIADO -->
@@ -565,18 +445,8 @@
     <div class="modal-body">
       <p style="margin-bottom: 16px;">Deseja marcar este fiado como <strong style="color: var(--ok);">PAGO</strong>?</p>
       <div id="modalPago-info"></div>
-      <div class="form-group" style="margin-top: 16px;">
-        <label>Data do Pagamento</label>
-        <input type="date" id="pago-data">
-      </div>
-      <div class="form-group">
-        <label>Forma de Recebimento</label>
-        <select id="pago-forma">
-          <option value="pix">Pix</option>
-          <option value="vista">Dinheiro</option>
-          <option value="boleto">Boleto</option>
-        </select>
-      </div>
+      <div class="form-group" style="margin-top: 16px;"><label>Data do Pagamento</label><input type="date" id="pago-data"></div>
+      <div class="form-group"><label>Forma de Recebimento</label><select id="pago-forma"><option value="pix">Pix</option><option value="vista">Dinheiro</option><option value="boleto">Boleto</option></select></div>
       <div style="display: flex; gap: 12px; margin-top: 16px;">
         <button class="btn btn-ghost" onclick="fecharModal('modalPago')">Cancelar</button>
         <button class="btn btn-success btn-block" onclick="confirmarPago()">✅ Confirmar Recebimento</button>
@@ -588,9 +458,9 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ================= DADOS COMPLETOS DOS PRODUTOS (300+ dos 3 PDFs) =================
+// ================= PRODUTOS (300+ dos 3 PDFs) =================
 const produtosBase = [
-  // ===== INSPIRADOS 100ML - Custo R$ 13 =====
+  // INSPIRADOS 100ML - R$ 13
   { id:'insp-goodgirl', nome:'Good Girl', ref:'Inspirado', cat:'inspirado', custo:13, publico:'Feminino', vol:'100ml' },
   { id:'insp-lavie', nome:'La Vie Est Belle', ref:'Inspirado', cat:'inspirado', custo:13, publico:'Feminino', vol:'100ml' },
   { id:'insp-libre', nome:'Libre', ref:'Inspirado', cat:'inspirado', custo:13, publico:'Feminino', vol:'100ml' },
@@ -622,7 +492,7 @@ const produtosBase = [
   { id:'insp-polored', nome:'Polo Red', ref:'Inspirado', cat:'inspirado', custo:13, publico:'Masculino', vol:'100ml' },
   { id:'insp-lacoste', nome:'Lacoste L.12.12 Blanc', ref:'Inspirado', cat:'inspirado', custo:13, publico:'Masculino', vol:'100ml' },
 
-  // ===== BRAND 50ML - Custo R$ 35 =====
+  // BRAND 50ML - R$ 35
   { id:'brand-goodgirl', nome:'Good Girl', ref:'Brand', cat:'brand', custo:35, publico:'Feminino', vol:'50ml' },
   { id:'brand-lavie', nome:'La Vie Est Belle', ref:'Brand', cat:'brand', custo:35, publico:'Feminino', vol:'50ml' },
   { id:'brand-libre', nome:'Libre', ref:'Brand', cat:'brand', custo:35, publico:'Feminino', vol:'50ml' },
@@ -634,7 +504,7 @@ const produtosBase = [
   { id:'brand-1m', nome:'1 Million', ref:'Brand', cat:'brand', custo:35, publico:'Masculino', vol:'50ml' },
   { id:'brand-bleu', nome:'Bleu de Chanel', ref:'Brand', cat:'brand', custo:35, publico:'Masculino', vol:'50ml' },
 
-  // ===== BRAND COLLECTION 25ML FEMININOS =====
+  // BRAND COLLECTION 25ML FEMININOS
   { id:'bc-212vip-branco', nome:'212 VIP Branco', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Feminino', vol:'25ml' },
   { id:'bc-alien', nome:'Alien', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Feminino', vol:'25ml' },
   { id:'bc-ange-secret', nome:'Ange ou Demon Le Secret', ref:'Brand Collection', cat:'brand-col', custo:36, publico:'Feminino', vol:'25ml' },
@@ -738,7 +608,7 @@ const produtosBase = [
   { id:'bc-goodgirl-fant', nome:'Good Girl Fantasy', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
   { id:'bc-goodgirl-glam', nome:'Good Girl Glam', ref:'Brand Collection', cat:'brand-col', custo:47, publico:'Feminino', vol:'25ml' },
 
-  // ===== BRAND COLLECTION 25ML MASCULINOS =====
+  // BRAND COLLECTION 25ML MASCULINOS
   { id:'bc-vip-men', nome:'VIP Men', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Masculino', vol:'25ml' },
   { id:'bc-pure-xs-25', nome:'Pure XS', ref:'Brand Collection', cat:'brand-col', custo:37, publico:'Masculino', vol:'25ml' },
   { id:'bc-kilian', nome:'Kilian Angels', ref:'Brand Collection', cat:'brand-col', custo:35, publico:'Masculino', vol:'25ml' },
@@ -786,7 +656,7 @@ const produtosBase = [
   { id:'bc-212-vip-black-25', nome:'212 VIP Black', ref:'Brand Collection', cat:'brand-col', custo:41, publico:'Masculino', vol:'25ml' },
   { id:'bc-ch-men-38', nome:'CH Men', ref:'Brand Collection', cat:'brand-col', custo:38, publico:'Masculino', vol:'25ml' },
 
-  // ===== BRAND GRANDES 80/100ML =====
+  // BRAND GRANDES 80/100ML
   { id:'brand-baccarat-100', nome:'Baccarat Rouge Extra IT', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'100ml' },
   { id:'brand-coco-80', nome:'Coco Chanel', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
   { id:'brand-la-nuit-80', nome:'La Nuit', ref:'Brand', cat:'brand', custo:100, publico:'Feminino', vol:'80ml' },
@@ -809,7 +679,7 @@ const produtosBase = [
   { id:'brand-bad-boy-100', nome:'Bad Boy', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
   { id:'brand-invictus-100', nome:'Invictus', ref:'Brand', cat:'brand', custo:100, publico:'Masculino', vol:'100ml' },
 
-  // ===== ÁRABES MASCULINOS =====
+  // ÁRABES MASCULINOS
   { id:'ara-alnoble-ameer', nome:'Al Noble Ameer', ref:'Lattafa', cat:'arabe', custo:170, publico:'Masculino', vol:'100ml' },
   { id:'ara-alnoble-safeer', nome:'Al Noble Safeer', ref:'Lattafa', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
   { id:'ara-alnoble-wazeer', nome:'Al Noble Wazeer', ref:'Lattafa', cat:'arabe', custo:135, publico:'Masculino', vol:'100ml' },
@@ -924,7 +794,7 @@ const produtosBase = [
   { id:'ara-masa', nome:'Masa', ref:'Lattafa', cat:'arabe', custo:170, publico:'Masculino', vol:'100ml' },
   { id:'ara-salvo-intense', nome:'Salvo Intense', ref:'Lattafa', cat:'arabe', custo:370, publico:'Masculino', vol:'100ml' },
 
-  // ===== ÁRABES FEMININOS =====
+  // ÁRABES FEMININOS
   { id:'ara-yara-elixir', nome:'Yara Elixir', ref:'Lattafa', cat:'arabe', custo:135, publico:'Feminino', vol:'100ml' },
   { id:'ara-yara-tous', nome:'Yara Tous', ref:'Lattafa', cat:'arabe', custo:185, publico:'Feminino', vol:'100ml' },
   { id:'ara-yara-moi', nome:'Yara Moi', ref:'Lattafa', cat:'arabe', custo:140, publico:'Feminino', vol:'100ml' },
@@ -1016,7 +886,7 @@ const produtosBase = [
   { id:'ara-candid', nome:'Candid', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
   { id:'ara-delilah-viola', nome:'Delilah Viola', ref:'Lattafa', cat:'arabe', custo:225, publico:'Feminino', vol:'100ml' },
 
-  // ===== NICHE LORIS 75ML =====
+  // NICHE LORIS 75ML
   { id:'ara-niche-exclusive', nome:'Niche Loris Exclusive', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
   { id:'ara-niche-noble', nome:'Niche Loris Noble', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
   { id:'ara-niche-white', nome:'Niche Loris White Leather', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
@@ -1029,7 +899,7 @@ const produtosBase = [
   { id:'ara-niche-bergamot', nome:'Niche Loris Bergamot Patcholi', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
   { id:'ara-niche-wood', nome:'Niche Loris Wood Song', ref:'Niche Loris', cat:'arabe', custo:225, publico:'Feminino', vol:'75ml' },
 
-  // ===== LATTAFA KIDS 75ML =====
+  // LATTAFA KIDS 75ML
   { id:'ara-lattafa-happy', nome:'Lattafa Happy Time', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
   { id:'ara-lattafa-stop', nome:'Lattafa Stop Wait Go', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
   { id:'ara-lattafa-brush', nome:'Lattafa Happy Brush', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
@@ -1037,7 +907,7 @@ const produtosBase = [
   { id:'ara-lattafa-sing', nome:'Lattafa Sing', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
   { id:'ara-lattafa-play', nome:'Lattafa Play', ref:'Lattafa', cat:'arabe', custo:90, publico:'Feminino', vol:'75ml' },
 
-  // ===== DESODORANTES ÁRABES =====
+  // DESODORANTES ÁRABES
   { id:'ara-des-khamrah-qahwa', nome:'Desodorante Khamrah Qahwa', ref:'Lattafa', cat:'arabe', custo:30, publico:'Unissex', vol:'desod' },
   { id:'ara-des-fakhar-black', nome:'Desodorante Fakhar Black', ref:'Lattafa', cat:'arabe', custo:30, publico:'Masculino', vol:'desod' },
   { id:'ara-des-cdn', nome:'Desodorante Club de Nuit', ref:'Armaf', cat:'arabe', custo:30, publico:'Masculino', vol:'desod' },
@@ -1055,7 +925,7 @@ const produtosBase = [
   { id:'ara-des-ajwad', nome:'Desodorante Ajwad', ref:'Lattafa', cat:'arabe', custo:30, publico:'Feminino', vol:'desod' },
   { id:'ara-des-badee-amethyst', nome:'Desodorante Badee Amethyste', ref:'Lattafa', cat:'arabe', custo:30, publico:'Feminino', vol:'desod' },
 
-  // ===== ARABIC MINI FEM 25ML =====
+  // ARABIC MINI FEM 25ML
   { id:'arab-yara-25', nome:'Yara', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
   { id:'arab-yara-rose-25', nome:'Yara Rose', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
   { id:'arab-yara-tous-25', nome:'Yara Tous', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
@@ -1075,7 +945,7 @@ const produtosBase = [
   { id:'arab-tharwah-25', nome:'Tharwah Alward', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
   { id:'arab-gold-25', nome:'Gold', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Feminino', vol:'25ml' },
 
-  // ===== ARABIC MINI MASC 25ML =====
+  // ARABIC MINI MASC 25ML
   { id:'arab-spectre-25', nome:'Spectre', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
   { id:'arab-badee-ghost-25', nome:'Bade\'e Al Oud Ghost', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
   { id:'arab-fakhar-gold-25', nome:'Fakhar Gold', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
@@ -1089,7 +959,7 @@ const produtosBase = [
   { id:'arab-9pm-25', nome:'9PM', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
   { id:'arab-asad-25', nome:'Asad', ref:'Arabic Collection', cat:'arabe', custo:45, publico:'Masculino', vol:'25ml' },
 
-  // ===== ORIGINAIS IMPORTADOS =====
+  // ORIGINAIS IMPORTADOS
   { id:'ori-invictus200', nome:'Invictus 200ml', ref:'Paco Rabanne', cat:'original', custo:530, publico:'Masculino', vol:'200ml' },
   { id:'ori-silver-intense', nome:'Silver Scent Intense 100ml', ref:'Jacques Bogart', cat:'original', custo:670, publico:'Masculino', vol:'100ml' },
   { id:'ori-212vip200', nome:'212 VIP Men 200ml', ref:'Carolina Herrera', cat:'original', custo:610, publico:'Masculino', vol:'200ml' },
@@ -1102,7 +972,7 @@ const produtosBase = [
   { id:'ori-jadore100', nome:'J\'adore 100ml', ref:'Dior', cat:'original', custo:810, publico:'Feminino', vol:'100ml' },
   { id:'ori-lavie100', nome:'La Vie Est Belle 100ml', ref:'Lancôme', cat:'original', custo:535, publico:'Feminino', vol:'100ml' },
 
-  // ===== VICTORIA'S SECRET =====
+  // VICTORIA'S SECRET
   { id:'vs-pear-shimmer', nome:'Pear Glacê Shimmer', ref:'Victoria\'s Secret', cat:'outros', custo:52, publico:'Feminino', vol:'250ml' },
   { id:'vs-bare-shimmer', nome:'Bare Vanilla Shimmer', ref:'Victoria\'s Secret', cat:'outros', custo:52, publico:'Feminino', vol:'250ml' },
   { id:'vs-coco-shimmer', nome:'Coconut Shimmer', ref:'Victoria\'s Secret', cat:'outros', custo:52, publico:'Feminino', vol:'250ml' },
@@ -1128,7 +998,7 @@ const produtosBase = [
   { id:'vs-splash-amber', nome:'Amber Romance', ref:'Victoria\'s Secret', cat:'outros', custo:95, publico:'Feminino', vol:'splash' },
   { id:'vs-splash-midnight', nome:'Midnight Bloom', ref:'Victoria\'s Secret', cat:'outros', custo:95, publico:'Feminino', vol:'splash' },
 
-  // ===== MAISON ALHAMBRA BODY MIST =====
+  // MAISON ALHAMBRA
   { id:'ma-delilah', nome:'Delilah', ref:'Maison Alhambra', cat:'outros', custo:55, publico:'Feminino', vol:'250ml' },
   { id:'ma-la-voie', nome:'Lá Voie', ref:'Maison Alhambra', cat:'outros', custo:55, publico:'Feminino', vol:'250ml' },
   { id:'ma-opera-rouge', nome:'Opera Rouge', ref:'Maison Alhambra', cat:'outros', custo:55, publico:'Feminino', vol:'250ml' },
@@ -1147,7 +1017,7 @@ const produtosBase = [
   { id:'ma-glacier', nome:'Glacier', ref:'Maison Alhambra', cat:'outros', custo:55, publico:'Feminino', vol:'250ml' },
   { id:'ma-intrude', nome:'Intrude', ref:'Maison Alhambra', cat:'outros', custo:55, publico:'Feminino', vol:'250ml' },
 
-  // ===== HIDRATANTES =====
+  // HIDRATANTES
   { id:'hid-miss-dior', nome:'Miss Dior Hidratante', ref:'Brand Collection', cat:'outros', custo:35, publico:'Feminino', vol:'200ml' },
   { id:'hid-libre', nome:'Libre Hidratante', ref:'Brand Collection', cat:'outros', custo:35, publico:'Feminino', vol:'200ml' },
   { id:'hid-angel', nome:'Angel Hidratante', ref:'Brand Collection', cat:'outros', custo:35, publico:'Feminino', vol:'200ml' },
@@ -1170,7 +1040,7 @@ const produtosBase = [
   { id:'hid-bad-boy', nome:'Bad Boy Hidratante', ref:'Brand Collection', cat:'outros', custo:35, publico:'Masculino', vol:'200ml' },
   { id:'hid-xerjoff', nome:'Xerjoff Hidratante', ref:'Brand Collection', cat:'outros', custo:35, publico:'Masculino', vol:'200ml' },
 
-  // ===== BODY SPLASH BRAND =====
+  // BODY SPLASH BRAND
   { id:'bs-goodgirl', nome:'Good Girl Body Splash', ref:'Brand Collection', cat:'outros', custo:48, publico:'Feminino', vol:'250ml' },
   { id:'bs-delina', nome:'Delina Body Splash', ref:'Brand Collection', cat:'outros', custo:48, publico:'Feminino', vol:'250ml' },
   { id:'bs-erba-pura', nome:'Erba Pura Body Splash', ref:'Brand Collection', cat:'outros', custo:48, publico:'Feminino', vol:'250ml' },
@@ -1215,7 +1085,6 @@ function showToast(msg, error=false) {
   t.className = 'toast show' + (error ? ' error' : '');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
-function formatDate(d) { return new Date(d).toLocaleString('pt-BR'); }
 function formatShortDate(d) { return new Date(d).toLocaleDateString('pt-BR'); }
 
 // ================= CÁLCULO DE PREÇO =================
@@ -1230,12 +1099,10 @@ function calcularPreco(produto, qtd=1) {
     if (qtd >= 50) { desc = config.atacado.f3; faixa = 'Faixa 3 (10% off)'; }
     else if (qtd >= 30) { desc = config.atacado.f2; faixa = 'Faixa 2 (7% off)'; }
     else { desc = config.atacado.f1; faixa = 'Faixa 1 (5% off)'; }
-    
     const precoFinal = precoVarejo * (1 - desc / 100);
     const lucro = precoFinal - custoTotal;
     return { tipo: 'atacado', faixa, desc, precoUnit: precoFinal, lucroUnit: lucro, custoTotal, precoVarejo, margem };
   }
-  
   return { tipo: 'varejo', faixa: 'Varejo', desc: 0, precoUnit: precoVarejo, lucroUnit: precoVarejo - custoTotal, custoTotal, precoVarejo, margem };
 }
 
@@ -1244,37 +1111,25 @@ function fazerLogin() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value.trim();
   const user = users.find(x => x.username === u && x.password === p);
-  
   if (user) {
     currentUser = user;
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app-header').style.display = 'block';
     document.getElementById('app-tabs').style.display = 'flex';
     document.getElementById('user-display-name').textContent = user.name + (user.role === 'admin' ? ' (Admin)' : ' (Vendedor)');
-    
     const selVend = document.getElementById('venda-vendedor');
     selVend.innerHTML = '';
     if (user.role === 'admin') {
-      users.forEach(x => {
-        selVend.innerHTML += `<option value="${x.name.split(' ')[0]}">${x.name}</option>`;
-      });
+      users.forEach(x => { selVend.innerHTML += `<option value="${x.name.split(' ')[0]}">${x.name}</option>`; });
     } else {
       selVend.innerHTML = `<option value="${user.name.split(' ')[0]}" selected>${user.name}</option>`;
     }
-    
     document.querySelectorAll('.tab').forEach(tab => {
-      if (tab.dataset.role === 'admin' && user.role !== 'admin') {
-        tab.style.display = 'none';
-      } else {
-        tab.style.display = 'block';
-      }
+      tab.style.display = (tab.dataset.role === 'admin' && user.role !== 'admin') ? 'none' : 'block';
     });
-    
     document.querySelector('.tab[data-section="venda"]').click();
     renderCatalogoLista();
-  } else {
-    showToast('Usuário ou senha incorretos', true);
-  }
+  } else { showToast('Usuário ou senha incorretos', true); }
 }
 
 function fazerLogout() {
@@ -1294,7 +1149,6 @@ document.querySelectorAll('.tab').forEach(tab => {
     tab.classList.add('active');
     const section = tab.dataset.section;
     document.getElementById(section).classList.add('active');
-    
     if (section === 'venda') cancelarVenda();
     if (section === 'minhas-vendas') renderMinhasVendas();
     if (section === 'vendas') updateVendas();
@@ -1327,14 +1181,12 @@ function selecionarProduto(id) {
   if (!produtoSelecionado) return;
   vendaSearch.value = produtoSelecionado.nome;
   vendaProductList.innerHTML = '';
-  
   const calc = calcularPreco(produtoSelecionado, 1);
   document.getElementById('sel-prod-name').textContent = produtoSelecionado.nome;
   document.getElementById('sel-prod-cat').textContent = produtoSelecionado.cat.toUpperCase() + ' • ' + produtoSelecionado.ref;
   document.getElementById('sel-prod-custo').textContent = formatMoney(produtoSelecionado.custo);
   document.getElementById('sel-prod-varejo').textContent = formatMoney(calc.precoVarejo) + ' (margem ' + calc.margem + '%)';
   document.getElementById('venda-selected-product').style.display = 'block';
-  
   document.getElementById('venda-qtd').value = 1;
   atualizarResumoVenda();
 }
@@ -1349,16 +1201,13 @@ function atualizarResumoVenda() {
   const calc = calcularPreco(produtoSelecionado, qtd);
   const total = calc.precoUnit * qtd;
   const lucroTotal = calc.lucroUnit * qtd;
-  
   let html = `
     <div class="summary-row"><span class="lbl">Preço unitário base (varejo)</span><span class="val">${formatMoney(calc.precoVarejo)}</span></div>
     <div class="summary-row"><span class="lbl">Custo total unitário (com frete)</span><span class="val">${formatMoney(calc.custoTotal)}</span></div>
   `;
-  
   if (calc.tipo === 'atacado') {
     html += `<div class="summary-row atacado"><span class="lbl">✅ ATACADO APLICADO: ${calc.faixa}</span><span class="val">-${calc.desc}%</span></div>`;
   }
-  
   html += `
     <div class="summary-row"><span class="lbl">Preço unitário final</span><span class="val" style="color: var(--ok);">${formatMoney(calc.precoUnit)}</span></div>
     <div class="summary-row"><span class="lbl">Lucro por unidade</span><span class="val" style="color: var(--accent);">${formatMoney(calc.lucroUnit)}</span></div>
@@ -1366,7 +1215,7 @@ function atualizarResumoVenda() {
     <div class="summary-row"><span class="lbl">Forma de pagamento</span><span class="val">${pagamento.toUpperCase()}</span></div>
     <div class="summary-row total"><span class="lbl">TOTAL DA VENDA</span><span class="val">${formatMoney(total)}</span></div>
     <div class="summary-row profit"><span class="lbl">LUCRO TOTAL</span><span class="val">${formatMoney(lucroTotal)}</span></div>
-    ${pagamento === 'fiado' ? '<div style="color: var(--warning); font-size: 12px; margin-top: 8px;">️ Venda registrada como FIADO - requer observação com dados do cliente</div>' : ''}
+    ${pagamento === 'fiado' ? '<div style="color: var(--warning); font-size: 12px; margin-top: 8px;">⚠️ Venda registrada como FIADO - requer observação com dados do cliente</div>' : ''}
   `;
   document.getElementById('venda-resumo').innerHTML = html;
 }
@@ -1378,41 +1227,26 @@ function confirmarVenda() {
   const pagamento = document.getElementById('venda-pagamento').value;
   const cliente = document.getElementById('venda-cliente').value.trim();
   const obs = document.getElementById('venda-obs').value.trim();
-  
   if (pagamento === 'fiado' && !obs) { showToast('Fiado exige observação com dados do cliente', true); return; }
-  
   const calc = calcularPreco(produtoSelecionado, qtd);
   const total = calc.precoUnit * qtd;
   const custoTotalProd = produtoSelecionado.custo * qtd;
   const freteTotal = (config.frete / Math.max(qtd, 10)) * qtd;
   const lucroTotal = total - custoTotalProd - freteTotal;
-  
   const distribuicao = {};
-  for (let nome in config.distribuicao) {
-    distribuicao[nome] = lucroTotal * (config.distribuicao[nome] / 100);
-  }
-  
+  for (let nome in config.distribuicao) { distribuicao[nome] = lucroTotal * (config.distribuicao[nome] / 100); }
   const venda = {
-    id: Date.now(),
-    data: new Date().toISOString(),
-    produto: produtoSelecionado.nome,
-    produtoId: produtoSelecionado.id,
-    ref: produtoSelecionado.ref,
-    cat: produtoSelecionado.cat,
-    qtd: qtd,
-    total: total,
-    custoTotal: custoTotalProd + freteTotal,
-    lucroTotal: lucroTotal,
-    margem: calc.margem,
+    id: Date.now(), data: new Date().toISOString(),
+    produto: produtoSelecionado.nome, produtoId: produtoSelecionado.id,
+    ref: produtoSelecionado.ref, cat: produtoSelecionado.cat,
+    qtd: qtd, total: total, custoTotal: custoTotalProd + freteTotal,
+    lucroTotal: lucroTotal, margem: calc.margem,
     pagamento: pagamento,
     tipoPreco: calc.tipo === 'atacado' ? `Atacado ${calc.faixa}` : 'Varejo',
-    vendedor: vendedor,
-    cliente: cliente || 'Não informado',
-    obs: obs,
+    vendedor: vendedor, cliente: cliente || 'Não informado', obs: obs,
     status: pagamento === 'fiado' ? 'pendente' : 'pago',
     distribuicao: distribuicao
   };
-  
   vendas.push(venda);
   saveVendas();
   showToast(`✅ Venda registrada: ${formatMoney(total)} (${vendedor})`);
@@ -1452,21 +1286,18 @@ function renderMinhasVendas() {
   `).join('');
 }
 
-// ================= CATÁLOGO PARA IMPRESSÃO =================
+// ================= CATÁLOGO =================
 function renderCatalogoLista() {
   const cat = document.getElementById('cat-categoria').value;
   const tipo = document.getElementById('cat-tipo-preco').value;
   const filtered = cat === 'todos' ? produtosBase : produtosBase.filter(p => p.cat === cat);
-  
   document.getElementById('cat-total').textContent = filtered.length;
-  
   document.getElementById('catalogo-lista').innerHTML = filtered.map(p => {
     const calc = calcularPreco(p, config.minAtacado);
     let precoMostrar = calc.precoVarejo;
     if (tipo === 'atacado1') precoMostrar = calc.precoVarejo * (1 - config.atacado.f1/100);
     if (tipo === 'atacado2') precoMostrar = calc.precoVarejo * (1 - config.atacado.f2/100);
     if (tipo === 'atacado3') precoMostrar = calc.precoVarejo * (1 - config.atacado.f3/100);
-    
     return `<div class="catalog-item">
       <input type="checkbox" class="cat-check" data-id="${p.id}" data-preco="${precoMostrar.toFixed(2)}">
       <div style="flex:1;">
@@ -1481,52 +1312,70 @@ function renderCatalogoLista() {
 document.getElementById('cat-tipo-preco').addEventListener('change', renderCatalogoLista);
 document.getElementById('cat-categoria').addEventListener('change', renderCatalogoLista);
 
-function selecionarTodosCatalogo() {
-  document.querySelectorAll('.cat-check').forEach(c => c.checked = true);
-}
-function limparSelecaoCatalogo() {
-  document.querySelectorAll('.cat-check').forEach(c => c.checked = false);
-}
+function selecionarTodosCatalogo() { document.querySelectorAll('.cat-check').forEach(c => c.checked = true); }
+function limparSelecaoCatalogo() { document.querySelectorAll('.cat-check').forEach(c => c.checked = false); }
 
-function imprimirCatalogo() {
+function gerarPreviewCatalogo() {
   const checks = document.querySelectorAll('.cat-check:checked');
   if (checks.length === 0) { showToast('Selecione pelo menos um produto', true); return; }
-  
   const tipo = document.getElementById('cat-tipo-preco').value;
   const tipoLabel = tipo === 'varejo' ? 'Preço de Varejo' : 
                     tipo === 'atacado1' ? `Atacado Faixa 1 (${config.atacado.f1}% off)` :
                     tipo === 'atacado2' ? `Atacado Faixa 2 (${config.atacado.f2}% off)` : `Atacado Faixa 3 (${config.atacado.f3}% off)`;
-  
-  document.getElementById('print-subtitle').textContent = `Tabela de Preços: ${tipoLabel} • ${checks.length} produtos selecionados`;
-  document.getElementById('print-data').textContent = new Date().toLocaleString('pt-BR');
-  
-  let html = '<div class="table-container" style="margin-top: 20px;"><table><thead><tr><th>Produto</th><th>Referência</th><th>Volume</th><th>Público</th><th>Preço</th><th>Recompra</th><th>Correios</th><th>Lucro</th><th>%</th></tr></thead><tbody>';
+  const freteUnit = config.frete / config.minAtacado;
+  let html = `<table style="width:100%; border-collapse:collapse; font-size:10px;">
+    <thead><tr>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Produto</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Ref.</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Vol.</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Púb.</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Preço</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Recomp.</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Frete</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">Lucro</th>
+      <th style="border:1px solid #ccc;padding:4px;background:#f0f0f0;">%</th>
+    </tr></thead><tbody>`;
   checks.forEach(c => {
     const p = produtosBase.find(x => x.id === c.dataset.id);
     const precoVenda = parseFloat(c.dataset.preco);
-    const freteUnit = config.frete / config.minAtacado;
     const custoTotal = p.custo + freteUnit;
     const lucro = precoVenda - custoTotal;
-    const margem = ((lucro / custoTotal) * 100).toFixed(1);
-    
+    const margem = ((lucro / custoTotal) * 100).toFixed(0);
     html += `<tr>
-      <td><strong>${p.nome}</strong></td>
-      <td>${p.ref}</td>
-      <td>${p.vol}</td>
-      <td>${p.publico}</td>
-      <td style="font-weight:700;">${formatMoney(precoVenda)}</td>
-      <td>${formatMoney(p.custo)}</td>
-      <td>${formatMoney(freteUnit)}</td>
-      <td style="color:#00aa00;font-weight:600;">${formatMoney(lucro)}</td>
-      <td>${margem}%</td>
+      <td style="border:1px solid #ddd;padding:3px;"><strong>${p.nome}</strong></td>
+      <td style="border:1px solid #ddd;padding:3px;">${p.ref}</td>
+      <td style="border:1px solid #ddd;padding:3px;">${p.vol}</td>
+      <td style="border:1px solid #ddd;padding:3px;">${p.publico}</td>
+      <td style="border:1px solid #ddd;padding:3px;font-weight:700;">${formatMoney(precoVenda)}</td>
+      <td style="border:1px solid #ddd;padding:3px;">${formatMoney(p.custo)}</td>
+      <td style="border:1px solid #ddd;padding:3px;">${formatMoney(freteUnit)}</td>
+      <td style="border:1px solid #ddd;padding:3px;color:#00aa00;font-weight:600;">${formatMoney(lucro)}</td>
+      <td style="border:1px solid #ddd;padding:3px;">${margem}%</td>
     </tr>`;
   });
-  html += '</tbody></table></div>';
-  
-  document.getElementById('relatorio-content').innerHTML = html;
+  html += '</tbody></table>';
+  document.getElementById('catalogo-preview-subtitle').textContent = `Tabela de Preços: ${tipoLabel} • ${checks.length} produtos selecionados`;
+  document.getElementById('catalogo-preview-content').innerHTML = html;
+  document.getElementById('catalogo-preview').classList.add('active');
+  showToast(`✅ Preview gerado com ${checks.length} produtos!`);
+}
+
+function imprimirCatalogo() {
+  const preview = document.getElementById('catalogo-preview');
+  if (!preview.classList.contains('active')) {
+    showToast('⚠️ Gere o preview primeiro clicando em "👁️ Gerar Preview"', true);
+    return;
+  }
+  const tipo = document.getElementById('cat-tipo-preco').value;
+  const tipoLabel = tipo === 'varejo' ? 'Preço de Varejo' : 
+                    tipo === 'atacado1' ? `Atacado Faixa 1 (${config.atacado.f1}% off)` :
+                    tipo === 'atacado2' ? `Atacado Faixa 2 (${config.atacado.f2}% off)` : `Atacado Faixa 3 (${config.atacado.f3}% off)`;
+  const checks = document.querySelectorAll('.cat-check:checked');
+  document.getElementById('print-subtitle').textContent = `Tabela de Preços: ${tipoLabel} • ${checks.length} produtos selecionados`;
+  document.getElementById('print-data').textContent = new Date().toLocaleString('pt-BR');
   document.querySelectorAll('.section').forEach(s => s.classList.remove('print-active'));
-  document.getElementById('relatorios').classList.add('print-active');
-  setTimeout(() => window.print(), 500);
+  document.getElementById('catalogo').classList.add('print-active');
+  setTimeout(() => window.print(), 800);
 }
 
 // ================= VENDAS (ADMIN) =================
@@ -1535,28 +1384,22 @@ function updateVendas() {
   const vendedor = document.getElementById('filter-vendedor').value;
   const pagamento = document.getElementById('filter-pagamento').value;
   const status = document.getElementById('filter-status').value;
-  
   let filtered = [...vendas];
   const agora = new Date();
-  
   if (periodo === 'hoje') filtered = filtered.filter(v => new Date(v.data).toDateString() === agora.toDateString());
   else if (periodo === 'semana') { const s = new Date(agora - 7*24*60*60*1000); filtered = filtered.filter(v => new Date(v.data) >= s); }
   else if (periodo === 'mes') filtered = filtered.filter(v => { const d = new Date(v.data); return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear(); });
-  
   if (vendedor !== 'todos') filtered = filtered.filter(v => v.vendedor === vendedor);
   if (pagamento !== 'todos') filtered = filtered.filter(v => v.pagamento === pagamento);
   if (status !== 'todos') filtered = filtered.filter(v => v.status === status);
-  
   const fat = filtered.filter(v => v.status === 'pago').reduce((s, v) => s + v.total, 0);
   const custo = filtered.reduce((s, v) => s + v.custoTotal, 0);
   const lucro = filtered.filter(v => v.status === 'pago').reduce((s, v) => s + v.lucroTotal, 0);
   const qtd = filtered.reduce((s, v) => s + v.qtd, 0);
-  
   document.getElementById('vendas-fat').textContent = formatMoney(fat);
   document.getElementById('vendas-custo').textContent = formatMoney(custo);
   document.getElementById('vendas-lucro').textContent = formatMoney(lucro);
   document.getElementById('vendas-qtd').textContent = qtd;
-  
   const tbody = document.getElementById('vendas-tbody');
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px;">Nenhuma venda no período</td></tr>';
@@ -1578,7 +1421,7 @@ function updateVendas() {
 }
 
 function excluirVenda(id) {
-  if (!confirm('⚠️ Excluir esta venda?')) return;
+  if (!confirm('️ Excluir esta venda?')) return;
   vendas = vendas.filter(v => v.id !== id);
   saveVendas();
   updateVendas();
@@ -1595,11 +1438,9 @@ function updateFiados() {
   const fiados = vendas.filter(v => v.pagamento === 'fiado');
   const pendentes = fiados.filter(v => v.status === 'pendente');
   const pagos = fiados.filter(v => v.status === 'pago');
-  
   document.getElementById('fiados-total').textContent = formatMoney(pendentes.reduce((s, v) => s + v.total, 0));
   document.getElementById('fiados-qtd').textContent = pendentes.length + ' pendentes';
   document.getElementById('fiados-recebido').textContent = formatMoney(pagos.reduce((s, v) => s + v.total, 0));
-  
   const tbody = document.getElementById('fiados-tbody');
   if (fiados.length === 0) {
     tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">Nenhum fiado registrado</td></tr>';
@@ -1654,20 +1495,18 @@ function confirmarPago() {
 
 function fecharModal(id) { document.getElementById(id).classList.remove('active'); }
 
-// ================= CALCULADORA (ORDEM CORRETA) =================
+// ================= CALCULADORA =================
 function calcularPrecoCalc() {
   const custo = parseFloat(document.getElementById('calc-custo').value) || 0;
   const qtd = parseInt(document.getElementById('calc-qtd').value) || 1;
   const frete = parseFloat(document.getElementById('calc-frete').value) || 0;
   const margem = parseFloat(document.getElementById('calc-margem').value) || 0;
-  
   const custoUnit = custo;
   const freteUnit = frete / Math.max(qtd, 10);
   const custoTotal = custoUnit + freteUnit;
   const precoVarejo = custoTotal * (1 + margem / 100);
   const lucroVarejo = precoVarejo - custoTotal;
   const margemPct = ((lucroVarejo / custoTotal) * 100).toFixed(1);
-  
   let html = `
     <div class="summary-row"><span class="lbl">Custo do produto</span><span class="val">${formatMoney(custoUnit)}</span></div>
     <div class="summary-row"><span class="lbl">Frete rateado por unidade</span><span class="val">${formatMoney(freteUnit)}</span></div>
@@ -1678,7 +1517,6 @@ function calcularPrecoCalc() {
     <div class="summary-row"><span class="lbl">Gasto para referente (frete)</span><span class="val">${formatMoney(freteUnit)}</span></div>
     <div class="summary-row profit"><span class="lbl">Lucro por unidade</span><span class="val">${formatMoney(lucroVarejo)} (${margemPct}%)</span></div>
   `;
-  
   if (qtd >= config.minAtacado) {
     const p1 = precoVarejo * (1 - config.atacado.f1/100);
     const p2 = precoVarejo * (1 - config.atacado.f2/100);
@@ -1689,29 +1527,20 @@ function calcularPrecoCalc() {
     const m1 = ((l1/custoTotal)*100).toFixed(1);
     const m2 = ((l2/custoTotal)*100).toFixed(1);
     const m3 = ((l3/custoTotal)*100).toFixed(1);
-    
     html += `
       <div class="summary-row atacado"><span class="lbl">Atacado Faixa 1 (${config.atacado.f1}% off)</span><span class="val">${formatMoney(p1)} (Lucro: ${formatMoney(l1)} - ${m1}%)</span></div>
       <div class="summary-row atacado"><span class="lbl">Atacado Faixa 2 (${config.atacado.f2}% off)</span><span class="val">${formatMoney(p2)} (Lucro: ${formatMoney(l2)} - ${m2}%)</span></div>
       <div class="summary-row atacado"><span class="lbl">Atacado Faixa 3 (${config.atacado.f3}% off)</span><span class="val">${formatMoney(p3)} (Lucro: ${formatMoney(l3)} - ${m3}%)</span></div>
     `;
   }
-  
-  // Distribuição do lucro
-  html += `
-    <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border);">
-      <h3 style="margin-bottom: 12px;">💰 Distribuição do Lucro de ${formatMoney(lucroVarejo)}</h3>
-  `;
-  
+  html += `<div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--border);"><h3 style="margin-bottom: 12px;">💰 Distribuição do Lucro de ${formatMoney(lucroVarejo)}</h3>`;
   for (let nome in config.distribuicao) {
     const pct = config.distribuicao[nome];
     const valor = lucroVarejo * (pct / 100);
     const classe = nome === 'Caixa' ? 'caixa' : 'prolabore';
     html += `<div class="summary-row ${classe}"><span class="lbl">${nome} - ${pct}%</span><span class="val">${formatMoney(valor)}</span></div>`;
   }
-  
   html += `</div>`;
-  
   document.getElementById('calc-resultado').innerHTML = html;
   document.getElementById('calc-resultado').style.display = 'block';
 }
@@ -1721,31 +1550,24 @@ function gerarRelatorio() {
   const periodo = document.getElementById('rel-periodo').value;
   const vendedor = document.getElementById('rel-vendedor').value;
   const tipo = document.getElementById('rel-tipo').value;
-  
   let filtered = [...vendas];
   const agora = new Date();
   if (periodo === 'hoje') filtered = filtered.filter(v => new Date(v.data).toDateString() === agora.toDateString());
   else if (periodo === 'semana') { const s = new Date(agora - 7*24*60*60*1000); filtered = filtered.filter(v => new Date(v.data) >= s); }
   else if (periodo === 'mes') filtered = filtered.filter(v => { const d = new Date(v.data); return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear(); });
   if (vendedor !== 'todos') filtered = filtered.filter(v => v.vendedor === vendedor);
-  
   const periodosLabel = { hoje: 'Hoje', semana: 'Esta Semana', mes: 'Este Mês', tudo: 'Todo o Período' };
-  document.getElementById('print-subtitle').textContent = `Relatório: ${periodosLabel[periodo]} ${vendedor !== 'todos' ? '• Vendedor: ' + vendedor : ''}`;
-  document.getElementById('print-data').textContent = new Date().toLocaleString('pt-BR');
-  
   const fat = filtered.filter(v => v.status === 'pago').reduce((s, v) => s + v.total, 0);
   const lucro = filtered.filter(v => v.status === 'pago').reduce((s, v) => s + v.lucroTotal, 0);
-  
   let html = `
     <div class="card print-active">
-      <h2>📊 Resumo do Período</h2>
+      <h2>📊 Relatório ${periodosLabel[periodo]} ${vendedor !== 'todos' ? '- ' + vendedor : ''}</h2>
       <div class="stats-grid">
         <div class="stat-card green"><div class="label">Faturamento</div><div class="value">${formatMoney(fat)}</div></div>
         <div class="stat-card blue"><div class="label">Lucro Líquido</div><div class="value">${formatMoney(lucro)}</div></div>
       </div>
     </div>
   `;
-  
   if (tipo === 'geral' || tipo === 'vendedor') {
     html += '<div class="card print-active"><h3>👥 Desempenho por Vendedor</h3><div class="table-container"><table><thead><tr><th>Vendedor</th><th>Vendas</th><th>Faturamento</th><th>Lucro</th><th>Pró-labore</th></tr></thead><tbody>';
     ['Luciano', 'Verônica', 'Luciano Junior', 'Alexandre'].forEach(v => {
@@ -1758,13 +1580,11 @@ function gerarRelatorio() {
     });
     html += '</tbody></table></div></div>';
   }
-  
   html += '<div class="card print-active"><h3>📋 Detalhamento das Vendas</h3><div class="table-container"><table><thead><tr><th>Data</th><th>Produto</th><th>Cliente</th><th>Vendedor</th><th>Qtd</th><th>Total</th><th>Lucro</th></tr></thead><tbody>';
   filtered.slice().reverse().forEach(v => {
     html += `<tr><td>${formatShortDate(v.data)}</td><td>${v.produto}</td><td>${v.cliente}</td><td>${v.vendedor}</td><td>${v.qtd}</td><td>${formatMoney(v.total)}</td><td style="color: var(--ok);">${formatMoney(v.lucroTotal)}</td></tr>`;
   });
   html += '</tbody></table></div></div>';
-  
   document.getElementById('relatorio-content').innerHTML = html;
   showToast('📊 Relatório gerado!');
 }
@@ -1773,7 +1593,7 @@ function imprimirRelatorio() {
   if (!document.getElementById('relatorio-content').innerHTML.trim()) { showToast('Gere o relatório primeiro', true); return; }
   document.querySelectorAll('.section').forEach(s => s.classList.remove('print-active'));
   document.getElementById('relatorios').classList.add('print-active');
-  setTimeout(() => window.print(), 500);
+  setTimeout(() => window.print(), 800);
 }
 
 // ================= CONFIGURAÇÕES =================
@@ -1804,16 +1624,10 @@ function atualizarTotalComissoes() {
   const alexandre = parseFloat(document.getElementById('cfg-com-alexandre').value) || 0;
   const caixa = parseFloat(document.getElementById('cfg-com-caixa').value) || 0;
   const total = luciano + veronica + junior + alexandre + caixa;
-  
   const totalEl = document.getElementById('cfg-total-com');
   totalEl.textContent = total.toFixed(1) + '%';
-  
-  if (Math.abs(total - 100) > 0.1) {
-    totalEl.style.color = 'var(--danger)';
-    totalEl.textContent += ' ⚠️ Deve ser 100%';
-  } else {
-    totalEl.style.color = 'var(--ok)';
-  }
+  totalEl.style.color = Math.abs(total - 100) > 0.1 ? 'var(--danger)' : 'var(--ok)';
+  if (Math.abs(total - 100) > 0.1) totalEl.textContent += ' ⚠️ Deve ser 100%';
 }
 
 ['cfg-com-luciano', 'cfg-com-veronica', 'cfg-com-junior', 'cfg-com-alexandre', 'cfg-com-caixa'].forEach(id => {
@@ -1827,12 +1641,7 @@ function salvarConfig() {
   const alexandre = parseFloat(document.getElementById('cfg-com-alexandre').value) || 0;
   const caixa = parseFloat(document.getElementById('cfg-com-caixa').value) || 0;
   const total = luciano + veronica + junior + alexandre + caixa;
-  
-  if (Math.abs(total - 100) > 0.1) {
-    showToast(`⚠️ Total da distribuição é ${total.toFixed(1)}%. Deve ser 100%!`, true);
-    return;
-  }
-  
+  if (Math.abs(total - 100) > 0.1) { showToast(`⚠️ Total da distribuição é ${total.toFixed(1)}%. Deve ser 100%!`, true); return; }
   config.frete = parseFloat(document.getElementById('cfg-frete').value) || 80;
   config.minAtacado = parseInt(document.getElementById('cfg-min-atacado').value) || 10;
   config.margens = {
@@ -1848,13 +1657,7 @@ function salvarConfig() {
     f2: parseFloat(document.getElementById('cfg-desc-f2').value) || 7,
     f3: parseFloat(document.getElementById('cfg-desc-f3').value) || 10
   };
-  config.distribuicao = {
-    'Luciano': luciano,
-    'Verônica': veronica,
-    'Luciano Junior': junior,
-    'Alexandre': alexandre,
-    'Caixa': caixa
-  };
+  config.distribuicao = { 'Luciano': luciano, 'Verônica': veronica, 'Luciano Junior': junior, 'Alexandre': alexandre, 'Caixa': caixa };
   saveConfig();
   showToast('✅ Configurações salvas!');
 }
@@ -1880,7 +1683,7 @@ function importarDados(e) {
       if (data.vendas) vendas = data.vendas;
       if (data.config) config = data.config;
       saveVendas(); saveConfig();
-      showToast('📤 Backup importado com sucesso!');
+      showToast(' Backup importado com sucesso!');
     } catch (err) { showToast('❌ Erro ao importar', true); }
   };
   reader.readAsText(file);
@@ -1894,7 +1697,6 @@ function limparTudo() {
   showToast('Dados limpos');
 }
 
-// Inicialização
 document.getElementById('login-user').focus();
 </script>
 </body>
