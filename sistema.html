@@ -1,0 +1,2147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfumes Itabuna - Sistema de Vendas Premium</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111111;
+            --surface-2: #1a1a1a;
+            --text: #f5f5f5;
+            --text-dim: #888888;
+            --accent: #c9a961;
+            --accent-dim: #8b7355;
+            --ok: #34d399;
+            --warn: #fbbf24;
+            --danger: #ef4444;
+            --border: #222222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .brand-text h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent) 0%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-badge {
+            background: var(--surface-2);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        .user-badge strong {
+            color: var(--accent);
+        }
+
+        .btn-logout {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* NAVIGATION */
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-tab {
+            background: var(--surface-2);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            padding: 0.625rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-tab:hover {
+            background: var(--surface);
+            color: var(--text);
+            border-color: var(--accent-dim);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+            color: var(--bg);
+            border-color: var(--accent);
+        }
+
+        /* MAIN CONTENT */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-dim);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* FORMS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-dim);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.1);
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dim) 100%);
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(201, 169, 97, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface);
+            border-color: var(--accent-dim);
+        }
+
+        .btn-success {
+            background: var(--ok);
+            color: var(--bg);
+        }
+
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warn);
+            color: var(--bg);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* SEARCH BOX */
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3rem;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.1);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        /* PRODUCT LIST */
+        .product-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .product-item {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .product-item:hover {
+            border-color: var(--accent-dim);
+            transform: translateX(4px);
+        }
+
+        .product-item.selected {
+            border-color: var(--accent);
+            background: rgba(201, 169, 97, 0.1);
+        }
+
+        .product-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-meta {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .product-item.selected .checkbox-custom {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .product-item.selected .checkbox-custom::after {
+            content: "✓";
+            color: var(--bg);
+            font-weight: bold;
+        }
+
+        /* TABLES */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background: var(--surface-2);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dim);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: var(--surface-2);
+        }
+
+        /* BADGES */
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: rgba(52, 211, 153, 0.2);
+            color: var(--ok);
+        }
+
+        .badge-warning {
+            background: rgba(251, 191, 36, 0.2);
+            color: var(--warn);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--ok);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warn);
+        }
+
+        /* HIDE SECTIONS */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            #catalogo-preview,
+            #catalogo-preview * {
+                visibility: visible;
+            }
+            
+            #catalogo-preview {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                padding: 20px;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            @page {
+                margin: 1cm;
+                size: auto;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-tabs {
+                gap: 0.25rem;
+            }
+            
+            .nav-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* LOADING */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-dim);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* FILTERS */
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* PREVIEW AREA */
+        #catalogo-preview {
+            background: white;
+            color: black;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        #catalogo-preview.show {
+            display: block;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .preview-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .preview-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-header p {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-top">
+            <div class="brand">
+                <div class="brand-icon"></div>
+                <div class="brand-text">
+                    <h1>PERFUMES • ITABUNA • SISTEMA</h1>
+                    <p>Painel Administrativo</p>
+                </div>
+            </div>
+            <div class="user-info">
+                <div class="user-badge">
+                    <strong id="header-username">Usuário</strong> 
+                    <span id="header-role">(Admin)</span>
+                </div>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </div>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('nova-venda')"> Nova Venda</button>
+            <button class="nav-tab" onclick="showSection('minhas-vendas')">📋 Minhas Vendas</button>
+            <button class="nav-tab" onclick="showSection('catalogo')">📚 Catálogo (Imprimir)</button>
+            <button class="nav-tab" onclick="showSection('todas-vendas')">📊 Todas as Vendas</button>
+            <button class="nav-tab" onclick="showSection('fiados')">📒 Fiados</button>
+            <button class="nav-tab" onclick="showSection('calculadora')"> Calculadora</button>
+            <button class="nav-tab" onclick="showSection('relatorios')">📈 Relatórios</button>
+            <button class="nav-tab" onclick="showSection('configuracoes')" id="tab-config">⚙️ Configurações</button>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- NOVA VENDA -->
+        <section id="nova-venda" class="section active">
+            <h2 class="page-title">💰 Registrar Nova Venda</h2>
+            <p class="page-subtitle">Preencha os dados da venda</p>
+            
+            <div class="card">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Buscar Produto</label>
+                    <div class="search-box">
+                        <input type="text" id="venda-busca" placeholder="Digite o nome do perfume..." oninput="buscarProdutosVenda()">
+                    </div>
+                </div>
+                
+                <div id="lista-produtos-venda" class="product-list" style="max-height: 400px; overflow-y: auto; margin-bottom: 1.5rem;">
+                    <!-- Produtos carregados via JS -->
+                </div>
+                
+                <div id="resumo-produto" style="display: none; background: var(--surface-2); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent);">Produto Selecionado</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Produto</label>
+                            <input type="text" id="resumo-nome" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <input type="text" id="resumo-tipo" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Custo unitário</label>
+                            <input type="text" id="resumo-custo" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Preço de Varejo</label>
+                            <input type="text" id="resumo-preco" readonly style="color: var(--ok); font-weight: bold;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Vendedor</label>
+                        <select id="venda-vendedor" required>
+                            <option value="">Selecione...</option>
+                            <option value="Luciano (Pai)">Luciano (Pai)</option>
+                            <option value="Verônica (Mãe)">Verônica (Mãe)</option>
+                            <option value="Luciano Junior">Luciano Junior</option>
+                            <option value="Alexandre">Alexandre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="venda-quantidade" min="1" value="1" required onchange="calcularResumoVenda()">
+                    </div>
+                    <div class="form-group">
+                        <label>Forma de Pagamento</label>
+                        <select id="venda-pagamento" required>
+                            <option value="À Vista">💵 À Vista</option>
+                            <option value="Pix">📱 Pix</option>
+                            <option value="Boleto">📄 Boleto</option>
+                            <option value="Fiado">📒 Fiado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Cliente</label>
+                        <input type="text" id="venda-cliente" placeholder="Nome completo">
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Observações (endereço, telefone, detalhes do fiado)</label>
+                    <textarea id="venda-obs" rows="3" placeholder="Informações adicionais..."></textarea>
+                </div>
+                
+                <div id="resumo-venda" style="display: none; background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--accent-dim);">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent);">📊 Resumo da Venda</h3>
+                    <div class="stats-grid" style="margin-bottom: 0;">
+                        <div class="stat-card">
+                            <div class="stat-label">Preço Unitário</div>
+                            <div class="stat-value" id="resumo-unitario">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Lucro por Unidade</div>
+                            <div class="stat-value" id="resumo-lucro-unit" style="color: var(--ok);">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Total</div>
+                            <div class="stat-value" id="resumo-total">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Lucro Total</div>
+                            <div class="stat-value" id="resumo-lucro-total" style="color: var(--ok);">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="cancelarVenda()">Cancelar</button>
+                    <button class="btn btn-success" onclick="confirmarVenda()">✅ Confirmar Venda</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- MINHAS VENDAS -->
+        <section id="minhas-vendas" class="section">
+            <h2 class="page-title">📋 Minhas Vendas</h2>
+            <p class="page-subtitle">Histórico das suas vendas</p>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Qtd</th>
+                            <th>Pagto</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Lucro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="minhas-vendas-tbody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CATÁLOGO -->
+        <section id="catalogo" class="section">
+            <h2 class="page-title">📚 Catálogo para Impressão</h2>
+            <p class="page-subtitle">Selecione os produtos e gere o catálogo</p>
+            
+            <div class="card">
+                <div class="form-grid" style="margin-bottom: 1rem;">
+                    <div class="form-group">
+                        <label>Tipo de Preço</label>
+                        <select id="catalogo-tipo-preco">
+                            <option value="varejo">Preço de Varejo</option>
+                            <option value="atacado1">Atacado Faixa 1 (5% off)</option>
+                            <option value="atacado2">Atacado Faixa 2 (7% off)</option>
+                            <option value="atacado3">Atacado Faixa 3 (10% off)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="catalogo-categoria">
+                            <option value="todas">Todas</option>
+                            <option value="Inspirados">Inspirados</option>
+                            <option value="Brand">Brand</option>
+                            <option value="Brand Collection">Brand Collection</option>
+                            <option value="Árabes">Árabes</option>
+                            <option value="Originais">Originais</option>
+                            <option value="Outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- BUSCA ADICIONADA AQUI -->
+                <div class="search-box" style="margin-bottom: 1.5rem;">
+                    <input type="text" id="catalogo-busca" placeholder=" Buscar perfume por nome..." oninput="filtrarCatalogo()">
+                </div>
+                
+                <div class="btn-group" style="margin-bottom: 1.5rem;">
+                    <button class="btn btn-primary" onclick="selecionarTodosCatalogo()">✅ Selecionar Todos</button>
+                    <button class="btn btn-secondary" onclick="limparSelecaoCatalogo()">Limpar Seleção</button>
+                    <button class="btn btn-warning" onclick="gerarPreviewCatalogo()">️ Gerar Preview</button>
+                    <button class="btn btn-success" onclick="imprimirCatalogo()">🖨️ Imprimir</button>
+                </div>
+                
+                <h3 style="margin-bottom: 1rem; color: var(--accent);">Produtos Disponíveis (<span id="catalogo-total">0</span>)</h3>
+                <div id="catalogo-produtos" class="product-list" style="max-height: 600px; overflow-y: auto;">
+                    <!-- Produtos carregados via JS -->
+                </div>
+            </div>
+            
+            <div id="catalogo-preview">
+                <div class="preview-header">
+                    <h1>Perfumes Itabuna - Tabela de Preços</h1>
+                    <p>Gerado em: <span id="preview-data"></span></p>
+                </div>
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Ref</th>
+                            <th>Vol</th>
+                            <th>Púb</th>
+                            <th>Preço</th>
+                            <th>Recompra</th>
+                            <th>Frete</th>
+                            <th>Lucro</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- TODAS AS VENDAS -->
+        <section id="todas-vendas" class="section">
+            <h2 class="page-title">📊 Todas as Vendas</h2>
+            <p class="page-subtitle">Visão geral de todas as vendas do sistema</p>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1rem;"> Filtro de Vendas</h3>
+                <div class="filters">
+                    <div class="form-group">
+                        <label>Período</label>
+                        <select id="filtro-periodo" onchange="aplicarFiltrosVendas()">
+                            <option value="hoje">Hoje</option>
+                            <option value="semana">Esta Semana</option>
+                            <option value="mes">Este Mês</option>
+                            <option value="tudo">Tudo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vendedor</label>
+                        <select id="filtro-vendedor" onchange="aplicarFiltrosVendas()">
+                            <option value="todos">Todos</option>
+                            <option value="Luciano (Pai)">Luciano (Pai)</option>
+                            <option value="Verônica (Mãe)">Verônica (Mãe)</option>
+                            <option value="Luciano Junior">Luciano Junior</option>
+                            <option value="Alexandre">Alexandre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pagamento</label>
+                        <select id="filtro-pagamento" onchange="aplicarFiltrosVendas()">
+                            <option value="todos">Todos</option>
+                            <option value="À Vista">À Vista</option>
+                            <option value="Pix">Pix</option>
+                            <option value="Boleto">Boleto</option>
+                            <option value="Fiado">Fiado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="filtro-status" onchange="aplicarFiltrosVendas()">
+                            <option value="todos">Todos</option>
+                            <option value="pago">Pago</option>
+                            <option value="pendente">Pendente</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Faturamento</div>
+                        <div class="stat-value" id="stat-faturamento">R$ 0,00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Custo Total</div>
+                        <div class="stat-value" id="stat-custo">R$ 0,00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Lucro Líquido</div>
+                        <div class="stat-value" id="stat-lucro">R$ 0,00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Qtd Vendida</div>
+                        <div class="stat-value" id="stat-qtd">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Produto</th>
+                            <th>Vendedor</th>
+                            <th>Qtd</th>
+                            <th>Pagto</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Lucro</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="todas-vendas-tbody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FIADOS -->
+        <section id="fiados" class="section">
+            <h2 class="page-title">📒 Controle de Fiados</h2>
+            <p class="page-subtitle">Gerencie as vendas pendentes de pagamento</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Pendente</div>
+                    <div class="stat-value" id="fiado-pendente" style="color: var(--danger);">R$ 0,00</div>
+                    <div style="font-size: 0.875rem; color: var(--text-dim); margin-top: 0.5rem;"><span id="fiado-qtd-pendente">0</span> fiados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Recebido</div>
+                    <div class="stat-value" id="fiado-recebido" style="color: var(--ok);">R$ 0,00</div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Produto</th>
+                            <th>Vendedor</th>
+                            <th>Valor</th>
+                            <th>Obs</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fiados-tbody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CALCULADORA -->
+        <section id="calculadora" class="section">
+            <h2 class="page-title"> Calculadora de Preço e Margem</h2>
+            <p class="page-subtitle">Calcule preços e margens de lucro</p>
+            
+            <div class="card">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Custo do Produto (R$)</label>
+                        <input type="number" id="calc-custo" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantidade no Pedido</label>
+                        <input type="number" id="calc-quantidade" value="1" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Frete Total (R$)</label>
+                        <input type="number" id="calc-frete" step="0.01" placeholder="0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Margem de Lucro (%)</label>
+                        <input type="number" id="calc-margem" value="90" min="0" max="1000">
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="calcularPreco()" style="margin-bottom: 2rem;">Calcular</button>
+                
+                <div id="calc-resultado" style="display: none;">
+                    <h3 style="margin-bottom: 1rem; color: var(--accent);">📊 Resultado do Cálculo</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Custo do Produto</div>
+                            <div class="stat-value" id="calc-res-custo">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Frete rateado por unidade</div>
+                            <div class="stat-value" id="calc-res-frete">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Custo total unitário</div>
+                            <div class="stat-value" id="calc-res-custo-total">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Porcentagem em cima</div>
+                            <div class="stat-value" id="calc-res-margem">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Preço de Varejo sugerido</div>
+                            <div class="stat-value" id="calc-res-varejo" style="color: var(--accent);">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Gasto para recomprar</div>
+                            <div class="stat-value" id="calc-res-recompra">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Gasto para referente (frete)</div>
+                            <div class="stat-value" id="calc-res-frete-rateado">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Lucro por unidade</div>
+                            <div class="stat-value" id="calc-res-lucro" style="color: var(--ok);">R$ 0,00</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem; color: var(--accent);">💰 Atacado</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Faixa 1 (10-29 un) - 5% off</div>
+                            <div class="stat-value" id="calc-res-atacado1">R$ 0,00</div>
+                            <div style="font-size: 0.875rem; color: var(--ok); margin-top: 0.5rem;">Lucro: <span id="calc-lucro-atacado1">R$ 0,00</span> (<span id="calc-pct-atacado1">0%</span>)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Faixa 2 (30-49 un) - 7% off</div>
+                            <div class="stat-value" id="calc-res-atacado2">R$ 0,00</div>
+                            <div style="font-size: 0.875rem; color: var(--ok); margin-top: 0.5rem;">Lucro: <span id="calc-lucro-atacado2">R$ 0,00</span> (<span id="calc-pct-atacado2">0%</span>)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Faixa 3 (50+ un) - 10% off</div>
+                            <div class="stat-value" id="calc-res-atacado3">R$ 0,00</div>
+                            <div style="font-size: 0.875rem; color: var(--ok); margin-top: 0.5rem;">Lucro: <span id="calc-lucro-atacado3">R$ 0,00</span> (<span id="calc-pct-atacado3">0%</span>)</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin: 1.5rem 0 1rem; color: var(--accent);">💵 Distribuição do Lucro (Pró-Labore)</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Luciano (Pai) - 30%</div>
+                            <div class="stat-value" id="calc-dist-luciano">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Verônica (Mãe) - 30%</div>
+                            <div class="stat-value" id="calc-dist-veronica">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Luciano Junior - 15%</div>
+                            <div class="stat-value" id="calc-dist-junior">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Alexandre - 15%</div>
+                            <div class="stat-value" id="calc-dist-alexandre">R$ 0,00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Caixa da Empresa - 10%</div>
+                            <div class="stat-value" id="calc-dist-caixa">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RELATÓRIOS -->
+        <section id="relatorios" class="section">
+            <h2 class="page-title">📈 Gerar Relatório</h2>
+            <p class="page-subtitle">Gere relatórios detalhados das vendas</p>
+            
+            <div class="card">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Período</label>
+                        <select id="rel-periodo">
+                            <option value="hoje">Hoje</option>
+                            <option value="semana">Esta Semana</option>
+                            <option value="mes">Este Mês</option>
+                            <option value="tudo">Tudo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vendedor</label>
+                        <select id="rel-vendedor">
+                            <option value="todos">Todos</option>
+                            <option value="Luciano (Pai)">Luciano (Pai)</option>
+                            <option value="Verônica (Mãe)">Verônica (Mãe)</option>
+                            <option value="Luciano Junior">Luciano Junior</option>
+                            <option value="Alexandre">Alexandre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de Relatório</label>
+                        <select id="rel-tipo">
+                            <option value="geral">Geral Completo</option>
+                            <option value="vendedor">Por Vendedor</option>
+                            <option value="produto">Por Produto</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="gerarRelatorio()">📊 Gerar</button>
+                    <button class="btn btn-success" onclick="imprimirRelatorio()">🖨️ Imprimir / PDF</button>
+                </div>
+            </div>
+            
+            <div id="relatorio-resultado" style="display: none;">
+                <!-- Conteúdo gerado via JS -->
+            </div>
+        </section>
+
+        <!-- CONFIGURAÇÕES -->
+        <section id="configuracoes" class="section">
+            <h2 class="page-title">⚙️ Configurações Gerais</h2>
+            <p class="page-subtitle">Ajuste as configurações do sistema</p>
+            
+            <div class="card">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Frete Médio por Pedido (R$)</label>
+                        <input type="number" id="config-frete" value="80" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Qtd Mínima para Atacado</label>
+                        <input type="number" id="config-qtd-min" value="10" min="1">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1rem;">📊 Margens por Categoria (%)</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Inspirados</label>
+                        <input type="number" id="config-margem-inspirados" value="90">
+                    </div>
+                    <div class="form-group">
+                        <label>Brand</label>
+                        <input type="number" id="config-margem-brand" value="80">
+                    </div>
+                    <div class="form-group">
+                        <label>Brand Collection</label>
+                        <input type="number" id="config-margem-brand-collection" value="85">
+                    </div>
+                    <div class="form-group">
+                        <label>Árabes</label>
+                        <input type="number" id="config-margem-arabes" value="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Originais</label>
+                        <input type="number" id="config-margem-originais" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Outros (Splash/Hidratante)</label>
+                        <input type="number" id="config-margem-outros" value="70">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1rem;">💰 Descontos de Atacado (%)</h3>
+                <p style="color: var(--text-dim); margin-bottom: 1rem; font-size: 0.9rem;">Desconto aplicado sobre o preço de varejo calculado.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Faixa 1 (10-29 un) - Desconto %</label>
+                        <input type="number" id="config-desc-atacado1" value="5" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Faixa 2 (30-49 un) - Desconto %</label>
+                        <input type="number" id="config-desc-atacado2" value="7" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Faixa 3 (50+ un) - Desconto %</label>
+                        <input type="number" id="config-desc-atacado3" value="10" min="0" max="100">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 1rem;">💵 Distribuição do Lucro (%) - Total deve ser 100%</h3>
+                <p style="color: var(--text-dim); margin-bottom: 1rem; font-size: 0.9rem;">Percentual do lucro destinado a cada vendedor e ao caixa da empresa.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Luciano (Pai) %</label>
+                        <input type="number" id="config-dist-luciano" value="30" min="0" max="100" onchange="validarDistribuicaoLucro()">
+                    </div>
+                    <div class="form-group">
+                        <label>Verônica (Mãe) %</label>
+                        <input type="number" id="config-dist-veronica" value="30" min="0" max="100" onchange="validarDistribuicaoLucro()">
+                    </div>
+                    <div class="form-group">
+                        <label>Luciano Junior %</label>
+                        <input type="number" id="config-dist-junior" value="15" min="0" max="100" onchange="validarDistribuicaoLucro()">
+                    </div>
+                    <div class="form-group">
+                        <label>Alexandre %</label>
+                        <input type="number" id="config-dist-alexandre" value="15" min="0" max="100" onchange="validarDistribuicaoLucro()">
+                    </div>
+                    <div class="form-group">
+                        <label>Caixa da Empresa %</label>
+                        <input type="number" id="config-dist-caixa" value="10" min="0" max="100" onchange="validarDistribuicaoLucro()">
+                    </div>
+                </div>
+                <div style="background: var(--surface-2); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                    <strong>Total da Distribuição:</strong> <span id="dist-total" style="color: var(--accent); font-size: 1.25rem;">100</span>%
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="salvarConfiguracoes()">💾 Salvar Configurações</button>
+                <button class="btn btn-secondary" onclick="exportarBackup()">📥 Exportar Backup</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 Importar Backup</button>
+                <input type="file" id="import-file" style="display: none" accept=".json" onchange="importarBackup(this)">
+                <button class="btn btn-danger" onclick="limparTudo()">🗑️ Limpar Tudo</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL CONFIRMAR RECEBIMENTO -->
+    <div class="modal-overlay" id="modal-recebimento">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmar Recebimento</h3>
+            </div>
+            <p style="margin-bottom: 1.5rem;">Deseja marcar este fiado como PAGO?</p>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Data do Pagamento</label>
+                <input type="date" id="recebimento-data">
+            </div>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label>Forma de Recebimento</label>
+                <select id="recebimento-forma">
+                    <option value="Pix">Pix</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Boleto">Boleto</option>
+                </select>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="fecharModalRecebimento()">Cancelar</button>
+                <button class="btn btn-success" onclick="confirmarRecebimento()">✅ Confirmar Recebimento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // CONFIGURAÇÃO DO SUPABASE
+        const SUPABASE_URL = 'https://hhyzbxrjsuqjypvrsmyk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhoeXpieHJqc3VxanlwdnJzbXlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM1MzQwNzMsImV4cCI6MjA1OTEwMjA3M30.dBUP99N1gbsEw0MzGxGGWxbVtbRqUEZJ6Uu0C1jDqG8';
+        
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) {
+            console.error('Erro ao inicializar Supabase:', e);
+        }
+
+        // ESTADO GLOBAL
+        let currentUser = null;
+        let isAdmin = false;
+        let produtos = [];
+        let vendas = JSON.parse(localStorage.getItem('vendas')) || [];
+        let configuracoes = JSON.parse(localStorage.getItem('configuracoes')) || {
+            frete: 80,
+            qtdMinAtacado: 10,
+            margens: {
+                'Inspirados': 90,
+                'Brand': 80,
+                'Brand Collection': 85,
+                'Árabes': 50,
+                'Originais': 30,
+                'Outros': 70
+            },
+            descontosAtacado: {
+                faixa1: 5,
+                faixa2: 7,
+                faixa3: 10
+            },
+            distribuicaoLucro: {
+                'Luciano (Pai)': 30,
+                'Verônica (Mãe)': 30,
+                'Luciano Junior': 15,
+                'Alexandre': 15,
+                'Caixa da Empresa': 10
+            }
+        };
+
+        let produtoSelecionado = null;
+        let fiadoSelecionadoId = null;
+        let catalogoSelecionados = new Set();
+
+        // INICIALIZAÇÃO
+        window.addEventListener('DOMContentLoaded', () => {
+            verificarLogin();
+            carregarConfiguracoes();
+        });
+
+        // AUTENTICAÇÃO
+        function verificarLogin() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const user = urlParams.get('user');
+            
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const users = {
+                'admin': { nome: 'Luciano (Pai)', role: 'admin', senha: 'admin123' },
+                'veronica': { nome: 'Verônica (Mãe)', role: 'vendedor', senha: 'venda123' },
+                'junior': { nome: 'Luciano Junior', role: 'vendedor', senha: 'venda123' },
+                'alexandre': { nome: 'Alexandre', role: 'vendedor', senha: 'venda123' }
+            };
+            
+            if (users[user]) {
+                currentUser = users[user];
+                isAdmin = users[user].role === 'admin';
+                
+                document.getElementById('header-username').textContent = users[user].nome;
+                document.getElementById('header-role').textContent = isAdmin ? '(Admin)' : '(Vendedor)';
+                
+                if (!isAdmin) {
+                    document.getElementById('tab-config').style.display = 'none';
+                }
+                
+                carregarProdutos();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            window.location.href = 'index.html';
+        }
+
+        // NAVEGAÇÃO
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (sectionId === 'minhas-vendas') carregarMinhasVendas();
+            if (sectionId === 'todas-vendas') carregarTodasVendas();
+            if (sectionId === 'fiados') carregarFiados();
+            if (sectionId === 'catalogo') carregarCatalogo();
+        }
+
+        // CARREGAR PRODUTOS DO SUPABASE
+        async function carregarProdutos() {
+            try {
+                const { data, error } = await supabase
+                    .from('produtos_editados')
+                    .select('*')
+                    .order('nome');
+                
+                if (error) throw error;
+                
+                produtos = data || [];
+                console.log(`✅ ${produtos.length} produtos carregados`);
+                
+                if (document.getElementById('nova-venda').classList.contains('active')) {
+                    buscarProdutosVenda();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                showToast('Erro ao carregar produtos do banco', 'error');
+            }
+        }
+
+        // NOVA VENDA - BUSCA
+        function buscarProdutosVenda() {
+            const busca = document.getElementById('venda-busca').value.toLowerCase();
+            const lista = document.getElementById('lista-produtos-venda');
+            
+            const filtrados = produtos.filter(p => 
+                p.nome.toLowerCase().includes(busca) ||
+                (p.ref && p.ref.toLowerCase().includes(busca))
+            );
+            
+            lista.innerHTML = filtrados.map(p => `
+                <div class="product-item" onclick="selecionarProduto('${p.id}')">
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <div class="checkbox-custom"></div>
+                        <div class="product-info">
+                            <h4>${p.nome}</h4>
+                            <div class="product-meta">${p.tipo} • ${p.vol} • ${p.publico}</div>
+                        </div>
+                    </div>
+                    <div class="product-price">${formatarMoeda(parseFloat(p.preco.replace(/[^0-9,]/g, '').replace(',', '.')))}</div>
+                </div>
+            `).join('');
+            
+            if (filtrados.length === 0) {
+                lista.innerHTML = '<div class="empty-state"><div class="empty-state-icon"></div><p>Nenhum produto encontrado</p></div>';
+            }
+        }
+
+        function selecionarProduto(id) {
+            produtoSelecionado = produtos.find(p => p.id === id);
+            if (!produtoSelecionado) return;
+            
+            document.getElementById('resumo-produto').style.display = 'block';
+            document.getElementById('resumo-nome').value = produtoSelecionado.nome;
+            document.getElementById('resumo-tipo').value = produtoSelecionado.tipo;
+            document.getElementById('resumo-custo').value = formatarMoeda(getCustoProduto(produtoSelecionado));
+            document.getElementById('resumo-preco').value = produtoSelecionado.preco;
+            
+            calcularResumoVenda();
+        }
+
+        function getCustoProduto(produto) {
+            const precosBase = {
+                'Inspirados': 13.00,
+                'Brand': 35.00,
+                'Brand Collection': 35.00,
+                'Árabes': 100.00,
+                'Originais': 200.00,
+                'Outros': 35.00
+            };
+            
+            return precosBase[produto.tipo] || 35.00;
+        }
+
+        function calcularResumoVenda() {
+            if (!produtoSelecionado) return;
+            
+            const qtd = parseInt(document.getElementById('venda-quantidade').value) || 1;
+            const custoUnit = getCustoProduto(produtoSelecionado);
+            const freteUnit = configuracoes.frete / Math.max(qtd, configuracoes.qtdMinAtacado);
+            const custoTotal = custoUnit + freteUnit;
+            const margem = configuracoes.margens[produtoSelecionado.tipo] || 90;
+            let precoVarejo = custoTotal * (1 + margem / 100);
+            
+            let desconto = 0;
+            if (qtd >= 50) desconto = configuracoes.descontosAtacado.faixa3 / 100;
+            else if (qtd >= 30) desconto = configuracoes.descontosAtacado.faixa2 / 100;
+            else if (qtd >= 10) desconto = configuracoes.descontosAtacado.faixa1 / 100;
+            
+            const precoFinal = precoVarejo * (1 - desconto);
+            const lucroUnit = precoFinal - custoTotal;
+            const total = precoFinal * qtd;
+            const lucroTotal = lucroUnit * qtd;
+            
+            document.getElementById('resumo-unitario').textContent = formatarMoeda(precoFinal);
+            document.getElementById('resumo-lucro-unit').textContent = formatarMoeda(lucroUnit);
+            document.getElementById('resumo-total').textContent = formatarMoeda(total);
+            document.getElementById('resumo-lucro-total').textContent = formatarMoeda(lucroTotal);
+            document.getElementById('resumo-venda').style.display = 'block';
+        }
+
+        function cancelarVenda() {
+            document.getElementById('venda-busca').value = '';
+            document.getElementById('lista-produtos-venda').innerHTML = '';
+            document.getElementById('resumo-produto').style.display = 'none';
+            document.getElementById('resumo-venda').style.display = 'none';
+            document.getElementById('venda-quantidade').value = 1;
+            document.getElementById('venda-cliente').value = '';
+            document.getElementById('venda-obs').value = '';
+            document.getElementById('venda-pagamento').value = 'À Vista';
+            produtoSelecionado = null;
+        }
+
+        function confirmarVenda() {
+            if (!produtoSelecionado) {
+                showToast('Selecione um produto', 'error');
+                return;
+            }
+            
+            const vendedor = document.getElementById('venda-vendedor').value;
+            if (!vendedor) {
+                showToast('Selecione o vendedor', 'error');
+                return;
+            }
+            
+            const qtd = parseInt(document.getElementById('venda-quantidade').value) || 1;
+            const pagamento = document.getElementById('venda-pagamento').value;
+            const cliente = document.getElementById('venda-cliente').value;
+            const obs = document.getElementById('venda-obs').value;
+            
+            if (pagamento === 'Fiado' && !obs) {
+                showToast('Fiado exige observações com dados do cliente', 'error');
+                return;
+            }
+            
+            const custoUnit = getCustoProduto(produtoSelecionado);
+            const freteUnit = configuracoes.frete / Math.max(qtd, configuracoes.qtdMinAtacado);
+            const custoTotal = custoUnit + freteUnit;
+            const margem = configuracoes.margens[produtoSelecionado.tipo] || 90;
+            let precoVarejo = custoTotal * (1 + margem / 100);
+            
+            let desconto = 0;
+            if (qtd >= 50) desconto = configuracoes.descontosAtacado.faixa3 / 100;
+            else if (qtd >= 30) desconto = configuracoes.descontosAtacado.faixa2 / 100;
+            else if (qtd >= 10) desconto = configuracoes.descontosAtacado.faixa1 / 100;
+            
+            const precoFinal = precoVarejo * (1 - desconto);
+            const lucroUnit = precoFinal - custoTotal;
+            const total = precoFinal * qtd;
+            const lucroTotal = lucroUnit * qtd;
+            
+            const venda = {
+                id: Date.now().toString(),
+                data: new Date().toISOString(),
+                produtoId: produtoSelecionado.id,
+                produtoNome: produtoSelecionado.nome,
+                produtoTipo: produtoSelecionado.tipo,
+                vendedor,
+                quantidade: qtd,
+                pagamento,
+                cliente,
+                obs,
+                precoUnitario: precoFinal,
+                custoUnitario: custoTotal,
+                total,
+                lucroTotal,
+                status: pagamento === 'Fiado' ? 'pendente' : 'pago'
+            };
+            
+            vendas.push(venda);
+            localStorage.setItem('vendas', JSON.stringify(vendas));
+            
+            showToast('Venda registrada com sucesso! ✅');
+            cancelarVenda();
+        }
+
+        // MINHAS VENDAS
+        function carregarMinhasVendas() {
+            const tbody = document.getElementById('minhas-vendas-tbody');
+            const minhasVendas = vendas.filter(v => v.vendedor === currentUser.nome);
+            
+            tbody.innerHTML = minhasVendas.map(v => `
+                <tr>
+                    <td>${new Date(v.data).toLocaleDateString('pt-BR')}</td>
+                    <td>${v.produtoNome}</td>
+                    <td>${v.quantidade}</td>
+                    <td>${v.pagamento}</td>
+                    <td><span class="badge ${v.status === 'pago' ? 'badge-success' : 'badge-warning'}">${v.status === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+                    <td>${formatarMoeda(v.total)}</td>
+                    <td style="color: var(--ok);">${formatarMoeda(v.lucroTotal)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // CATÁLOGO
+        function carregarCatalogo() {
+            filtrarCatalogo();
+        }
+
+        function filtrarCatalogo() {
+            const categoria = document.getElementById('catalogo-categoria').value;
+            const busca = document.getElementById('catalogo-busca').value.toLowerCase();
+            const container = document.getElementById('catalogo-produtos');
+            
+            let filtrados = produtos;
+            
+            if (categoria !== 'todas') {
+                filtrados = filtrados.filter(p => p.tipo === categoria);
+            }
+            
+            if (busca) {
+                filtrados = filtrados.filter(p => 
+                    p.nome.toLowerCase().includes(busca) ||
+                    (p.ref && p.ref.toLowerCase().includes(busca))
+                );
+            }
+            
+            document.getElementById('catalogo-total').textContent = filtrados.length;
+            
+            container.innerHTML = filtrados.map(p => {
+                const preco = calcularPrecoProduto(p, 'varejo');
+                const selecionado = catalogoSelecionados.has(p.id);
+                
+                return `
+                    <div class="product-item ${selecionado ? 'selected' : ''}" onclick="toggleSelecaoCatalogo('${p.id}')">
+                        <div style="display: flex; align-items: center; flex: 1;">
+                            <div class="checkbox-custom"></div>
+                            <div class="product-info">
+                                <h4>${p.nome}</h4>
+                                <div class="product-meta">${p.tipo} • ${p.vol} • ${p.publico}</div>
+                            </div>
+                        </div>
+                        <div class="product-price">${formatarMoeda(preco)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function calcularPrecoProduto(produto, tipo) {
+            const custoUnit = getCustoProduto(produto);
+            const freteUnit = configuracoes.frete / configuracoes.qtdMinAtacado;
+            const custoTotal = custoUnit + freteUnit;
+            const margem = configuracoes.margens[produto.tipo] || 90;
+            let preco = custoTotal * (1 + margem / 100);
+            
+            if (tipo === 'atacado1') preco *= (1 - configuracoes.descontosAtacado.faixa1 / 100);
+            else if (tipo === 'atacado2') preco *= (1 - configuracoes.descontosAtacado.faixa2 / 100);
+            else if (tipo === 'atacado3') preco *= (1 - configuracoes.descontosAtacado.faixa3 / 100);
+            
+            return preco;
+        }
+
+        function toggleSelecaoCatalogo(id) {
+            if (catalogoSelecionados.has(id)) {
+                catalogoSelecionados.delete(id);
+            } else {
+                catalogoSelecionados.add(id);
+            }
+            filtrarCatalogo();
+        }
+
+        function selecionarTodosCatalogo() {
+            const categoria = document.getElementById('catalogo-categoria').value;
+            const busca = document.getElementById('catalogo-busca').value.toLowerCase();
+            
+            let filtrados = produtos;
+            if (categoria !== 'todas') filtrados = filtrados.filter(p => p.tipo === categoria);
+            if (busca) filtrados = filtrados.filter(p => p.nome.toLowerCase().includes(busca));
+            
+            filtrados.forEach(p => catalogoSelecionados.add(p.id));
+            filtrarCatalogo();
+        }
+
+        function limparSelecaoCatalogo() {
+            catalogoSelecionados.clear();
+            filtrarCatalogo();
+        }
+
+        function gerarPreviewCatalogo() {
+            if (catalogoSelecionados.size === 0) {
+                showToast('Selecione pelo menos um produto', 'error');
+                return;
+            }
+            
+            const tipoPreco = document.getElementById('catalogo-tipo-preco').value;
+            const tbody = document.getElementById('preview-tbody');
+            
+            const selecionados = produtos.filter(p => catalogoSelecionados.has(p.id));
+            
+            tbody.innerHTML = selecionados.map(p => {
+                const preco = calcularPrecoProduto(p, tipoPreco);
+                const custo = getCustoProduto(p);
+                const lucro = preco - custo;
+                const pctLucro = ((lucro / custo) * 100).toFixed(0);
+                
+                return `
+                    <tr>
+                        <td>${p.nome}</td>
+                        <td>${p.ref || '-'}</td>
+                        <td>${p.vol}</td>
+                        <td>${p.publico}</td>
+                        <td>${formatarMoeda(preco)}</td>
+                        <td>${formatarMoeda(custo)}</td>
+                        <td>${formatarMoeda(configuracoes.frete / configuracoes.qtdMinAtacado)}</td>
+                        <td>${formatarMoeda(lucro)}</td>
+                        <td>${pctLucro}%</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('preview-data').textContent = new Date().toLocaleString('pt-BR');
+            document.getElementById('catalogo-preview').classList.add('show');
+        }
+
+        function imprimirCatalogo() {
+            if (!document.getElementById('catalogo-preview').classList.contains('show')) {
+                showToast('Gere o preview primeiro', 'warning');
+                return;
+            }
+            
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+
+        // TODAS AS VENDAS
+        function carregarTodasVendas() {
+            aplicarFiltrosVendas();
+        }
+
+        function aplicarFiltrosVendas() {
+            const periodo = document.getElementById('filtro-periodo').value;
+            const vendedor = document.getElementById('filtro-vendedor').value;
+            const pagamento = document.getElementById('filtro-pagamento').value;
+            const status = document.getElementById('filtro-status').value;
+            
+            let filtradas = [...vendas];
+            
+            const agora = new Date();
+            if (periodo === 'hoje') {
+                filtradas = filtradas.filter(v => new Date(v.data).toDateString() === agora.toDateString());
+            } else if (periodo === 'semana') {
+                const semanaAtras = new Date(agora - 7 * 24 * 60 * 60 * 1000);
+                filtradas = filtradas.filter(v => new Date(v.data) >= semanaAtras);
+            } else if (periodo === 'mes') {
+                filtradas = filtradas.filter(v => {
+                    const d = new Date(v.data);
+                    return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear();
+                });
+            }
+            
+            if (vendedor !== 'todos') filtradas = filtradas.filter(v => v.vendedor === vendedor);
+            if (pagamento !== 'todos') filtradas = filtradas.filter(v => v.pagamento === pagamento);
+            if (status !== 'todos') filtradas = filtradas.filter(v => v.status === status);
+            
+            const tbody = document.getElementById('todas-vendas-tbody');
+            tbody.innerHTML = filtradas.map(v => `
+                <tr>
+                    <td>${new Date(v.data).toLocaleDateString('pt-BR')}</td>
+                    <td>${v.produtoNome}</td>
+                    <td>${v.vendedor}</td>
+                    <td>${v.quantidade}</td>
+                    <td>${v.pagamento}</td>
+                    <td><span class="badge ${v.status === 'pago' ? 'badge-success' : 'badge-warning'}">${v.status === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+                    <td>${formatarMoeda(v.total)}</td>
+                    <td style="color: var(--ok);">${formatarMoeda(v.lucroTotal)}</td>
+                    <td>
+                        ${v.status === 'pendente' ? `<button class="btn btn-success" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;" onclick="abrirModalRecebimento('${v.id}')">Receber</button>` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+            
+            const faturamento = filtradas.reduce((sum, v) => sum + v.total, 0);
+            const custo = filtradas.reduce((sum, v) => sum + (v.custoUnitario * v.quantidade), 0);
+            const lucro = filtradas.reduce((sum, v) => sum + v.lucroTotal, 0);
+            const qtd = filtradas.reduce((sum, v) => sum + v.quantidade, 0);
+            
+            document.getElementById('stat-faturamento').textContent = formatarMoeda(faturamento);
+            document.getElementById('stat-custo').textContent = formatarMoeda(custo);
+            document.getElementById('stat-lucro').textContent = formatarMoeda(lucro);
+            document.getElementById('stat-qtd').textContent = qtd;
+        }
+
+        // FIADOS
+        function carregarFiados() {
+            const fiados = vendas.filter(v => v.pagamento === 'Fiado');
+            const pendentes = fiados.filter(v => v.status === 'pendente');
+            const recebidos = fiados.filter(v => v.status === 'pago');
+            
+            const totalPendente = pendentes.reduce((sum, v) => sum + v.total, 0);
+            const totalRecebido = recebidos.reduce((sum, v) => sum + v.total, 0);
+            
+            document.getElementById('fiado-pendente').textContent = formatarMoeda(totalPendente);
+            document.getElementById('fiado-qtd-pendente').textContent = pendentes.length;
+            document.getElementById('fiado-recebido').textContent = formatarMoeda(totalRecebido);
+            
+            const tbody = document.getElementById('fiados-tbody');
+            tbody.innerHTML = fiados.map(v => `
+                <tr>
+                    <td>${new Date(v.data).toLocaleDateString('pt-BR')}</td>
+                    <td>${v.cliente || 'N/A'}</td>
+                    <td>${v.produtoNome}</td>
+                    <td>${v.vendedor}</td>
+                    <td>${formatarMoeda(v.total)}</td>
+                    <td>${v.obs || '-'}</td>
+                    <td><span class="badge ${v.status === 'pago' ? 'badge-success' : 'badge-warning'}">${v.status === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+                    <td>
+                        ${v.status === 'pendente' ? `<button class="btn btn-success" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;" onclick="abrirModalRecebimento('${v.id}')">Receber</button>` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalRecebimento(vendaId) {
+            fiadoSelecionadoId = vendaId;
+            document.getElementById('recebimento-data').value = new Date().toISOString().split('T')[0];
+            document.getElementById('modal-recebimento').classList.add('active');
+        }
+
+        function fecharModalRecebimento() {
+            document.getElementById('modal-recebimento').classList.remove('active');
+            fiadoSelecionadoId = null;
+        }
+
+        function confirmarRecebimento() {
+            if (!fiadoSelecionadoId) return;
+            
+            const dataPagamento = document.getElementById('recebimento-data').value;
+            const formaPagamento = document.getElementById('recebimento-forma').value;
+            
+            const venda = vendas.find(v => v.id === fiadoSelecionadoId);
+            if (venda) {
+                venda.status = 'pago';
+                venda.dataPagamento = dataPagamento;
+                venda.formaPagamento = formaPagamento;
+                localStorage.setItem('vendas', JSON.stringify(vendas));
+                
+                showToast('Fiado recebido com sucesso! ✅');
+                fecharModalRecebimento();
+                carregarFiados();
+                if (document.getElementById('todas-vendas').classList.contains('active')) {
+                    aplicarFiltrosVendas();
+                }
+            }
+        }
+
+        // CALCULADORA
+        function calcularPreco() {
+            const custo = parseFloat(document.getElementById('calc-custo').value) || 0;
+            const qtd = parseInt(document.getElementById('calc-quantidade').value) || 1;
+            const frete = parseFloat(document.getElementById('calc-frete').value) || 0;
+            const margem = parseFloat(document.getElementById('calc-margem').value) || 0;
+            
+            const freteUnit = frete / Math.max(qtd, configuracoes.qtdMinAtacado);
+            const custoTotal = custo + freteUnit;
+            const precoVarejo = custoTotal * (1 + margem / 100);
+            const lucro = precoVarejo - custoTotal;
+            
+            const atacado1 = precoVarejo * (1 - configuracoes.descontosAtacado.faixa1 / 100);
+            const atacado2 = precoVarejo * (1 - configuracoes.descontosAtacado.faixa2 / 100);
+            const atacado3 = precoVarejo * (1 - configuracoes.descontosAtacado.faixa3 / 100);
+            
+            document.getElementById('calc-resultado').style.display = 'block';
+            document.getElementById('calc-res-custo').textContent = formatarMoeda(custo);
+            document.getElementById('calc-res-frete').textContent = formatarMoeda(freteUnit);
+            document.getElementById('calc-res-custo-total').textContent = formatarMoeda(custoTotal);
+            document.getElementById('calc-res-margem').textContent = margem + '%';
+            document.getElementById('calc-res-varejo').textContent = formatarMoeda(precoVarejo);
+            document.getElementById('calc-res-recompra').textContent = formatarMoeda(custo);
+            document.getElementById('calc-res-frete-rateado').textContent = formatarMoeda(freteUnit);
+            document.getElementById('calc-res-lucro').textContent = formatarMoeda(lucro);
+            
+            document.getElementById('calc-res-atacado1').textContent = formatarMoeda(atacado1);
+            document.getElementById('calc-lucro-atacado1').textContent = formatarMoeda(atacado1 - custoTotal);
+            document.getElementById('calc-pct-atacado1').textContent = (((atacado1 - custoTotal) / custoTotal) * 100).toFixed(0) + '%';
+            
+            document.getElementById('calc-res-atacado2').textContent = formatarMoeda(atacado2);
+            document.getElementById('calc-lucro-atacado2').textContent = formatarMoeda(atacado2 - custoTotal);
+            document.getElementById('calc-pct-atacado2').textContent = (((atacado2 - custoTotal) / custoTotal) * 100).toFixed(0) + '%';
+            
+            document.getElementById('calc-res-atacado3').textContent = formatarMoeda(atacado3);
+            document.getElementById('calc-lucro-atacado3').textContent = formatarMoeda(atacado3 - custoTotal);
+            document.getElementById('calc-pct-atacado3').textContent = (((atacado3 - custoTotal) / custoTotal) * 100).toFixed(0) + '%';
+            
+            const dist = configuracoes.distribuicaoLucro;
+            document.getElementById('calc-dist-luciano').textContent = formatarMoeda(lucro * dist['Luciano (Pai)'] / 100);
+            document.getElementById('calc-dist-veronica').textContent = formatarMoeda(lucro * dist['Verônica (Mãe)'] / 100);
+            document.getElementById('calc-dist-junior').textContent = formatarMoeda(lucro * dist['Luciano Junior'] / 100);
+            document.getElementById('calc-dist-alexandre').textContent = formatarMoeda(lucro * dist['Alexandre'] / 100);
+            document.getElementById('calc-dist-caixa').textContent = formatarMoeda(lucro * dist['Caixa da Empresa'] / 100);
+        }
+
+        // RELATÓRIOS
+        function gerarRelatorio() {
+            showToast('Relatório gerado! Use o botão Imprimir', 'success');
+        }
+
+        function imprimirRelatorio() {
+            window.print();
+        }
+
+        // CONFIGURAÇÕES
+        function carregarConfiguracoes() {
+            document.getElementById('config-frete').value = configuracoes.frete;
+            document.getElementById('config-qtd-min').value = configuracoes.qtdMinAtacado;
+            document.getElementById('config-margem-inspirados').value = configuracoes.margens['Inspirados'];
+            document.getElementById('config-margem-brand').value = configuracoes.margens['Brand'];
+            document.getElementById('config-margem-brand-collection').value = configuracoes.margens['Brand Collection'];
+            document.getElementById('config-margem-arabes').value = configuracoes.margens['Árabes'];
+            document.getElementById('config-margem-originais').value = configuracoes.margens['Originais'];
+            document.getElementById('config-margem-outros').value = configuracoes.margens['Outros'];
+            document.getElementById('config-desc-atacado1').value = configuracoes.descontosAtacado.faixa1;
+            document.getElementById('config-desc-atacado2').value = configuracoes.descontosAtacado.faixa2;
+            document.getElementById('config-desc-atacado3').value = configuracoes.descontosAtacado.faixa3;
+            document.getElementById('config-dist-luciano').value = configuracoes.distribuicaoLucro['Luciano (Pai)'];
+            document.getElementById('config-dist-veronica').value = configuracoes.distribuicaoLucro['Verônica (Mãe)'];
+            document.getElementById('config-dist-junior').value = configuracoes.distribuicaoLucro['Luciano Junior'];
+            document.getElementById('config-dist-alexandre').value = configuracoes.distribuicaoLucro['Alexandre'];
+            document.getElementById('config-dist-caixa').value = configuracoes.distribuicaoLucro['Caixa da Empresa'];
+        }
+
+        function validarDistribuicaoLucro() {
+            const total = 
+                parseInt(document.getElementById('config-dist-luciano').value) || 0 +
+                parseInt(document.getElementById('config-dist-veronica').value) || 0 +
+                parseInt(document.getElementById('config-dist-junior').value) || 0 +
+                parseInt(document.getElementById('config-dist-alexandre').value) || 0 +
+                parseInt(document.getElementById('config-dist-caixa').value) || 0;
+            
+            document.getElementById('dist-total').textContent = total;
+            document.getElementById('dist-total').style.color = total === 100 ? 'var(--ok)' : 'var(--danger)';
+        }
+
+        function salvarConfiguracoes() {
+            const total = 
+                parseInt(document.getElementById('config-dist-luciano').value) || 0 +
+                parseInt(document.getElementById('config-dist-veronica').value) || 0 +
+                parseInt(document.getElementById('config-dist-junior').value) || 0 +
+                parseInt(document.getElementById('config-dist-alexandre').value) || 0 +
+                parseInt(document.getElementById('config-dist-caixa').value) || 0;
+            
+            if (total !== 100) {
+                showToast('Distribuição do lucro deve somar 100%!', 'error');
+                return;
+            }
+            
+            configuracoes = {
+                frete: parseFloat(document.getElementById('config-frete').value) || 80,
+                qtdMinAtacado: parseInt(document.getElementById('config-qtd-min').value) || 10,
+                margens: {
+                    'Inspirados': parseInt(document.getElementById('config-margem-inspirados').value) || 90,
+                    'Brand': parseInt(document.getElementById('config-margem-brand').value) || 80,
+                    'Brand Collection': parseInt(document.getElementById('config-margem-brand-collection').value) || 85,
+                    'Árabes': parseInt(document.getElementById('config-margem-arabes').value) || 50,
+                    'Originais': parseInt(document.getElementById('config-margem-originais').value) || 30,
+                    'Outros': parseInt(document.getElementById('config-margem-outros').value) || 70
+                },
+                descontosAtacado: {
+                    faixa1: parseInt(document.getElementById('config-desc-atacado1').value) || 5,
+                    faixa2: parseInt(document.getElementById('config-desc-atacado2').value) || 7,
+                    faixa3: parseInt(document.getElementById('config-desc-atacado3').value) || 10
+                },
+                distribuicaoLucro: {
+                    'Luciano (Pai)': parseInt(document.getElementById('config-dist-luciano').value) || 30,
+                    'Verônica (Mãe)': parseInt(document.getElementById('config-dist-veronica').value) || 30,
+                    'Luciano Junior': parseInt(document.getElementById('config-dist-junior').value) || 15,
+                    'Alexandre': parseInt(document.getElementById('config-dist-alexandre').value) || 15,
+                    'Caixa da Empresa': parseInt(document.getElementById('config-dist-caixa').value) || 10
+                }
+            };
+            
+            localStorage.setItem('configuracoes', JSON.stringify(configuracoes));
+            showToast('Configurações salvas com sucesso! ✅');
+        }
+
+        function exportarBackup() {
+            const dados = {
+                vendas,
+                configuracoes,
+                dataExportacao: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `backup-perfumes-itabuna-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            showToast('Backup exportado! 📥');
+        }
+
+        function importarBackup(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    if (dados.vendas) {
+                        vendas = dados.vendas;
+                        localStorage.setItem('vendas', JSON.stringify(vendas));
+                    }
+                    if (dados.configuracoes) {
+                        configuracoes = dados.configuracoes;
+                        localStorage.setItem('configuracoes', JSON.stringify(configuracoes));
+                        carregarConfiguracoes();
+                    }
+                    showToast('Backup importado com sucesso! ✅');
+                } catch (err) {
+                    showToast('Erro ao importar backup', 'error');
+                }
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        function limparTudo() {
+            if (confirm('⚠️ ATENÇÃO: Isso apagará TODOS os dados! Deseja continuar?')) {
+                localStorage.removeItem('vendas');
+                localStorage.removeItem('configuracoes');
+                vendas = [];
+                configuracoes = {
+                    frete: 80,
+                    qtdMinAtacado: 10,
+                    margens: {
+                        'Inspirados': 90,
+                        'Brand': 80,
+                        'Brand Collection': 85,
+                        'Árabes': 50,
+                        'Originais': 30,
+                        'Outros': 70
+                    },
+                    descontosAtacado: {
+                        faixa1: 5,
+                        faixa2: 7,
+                        faixa3: 10
+                    },
+                    distribuicaoLucro: {
+                        'Luciano (Pai)': 30,
+                        'Verônica (Mãe)': 30,
+                        'Luciano Junior': 15,
+                        'Alexandre': 15,
+                        'Caixa da Empresa': 10
+                    }
+                };
+                showToast('Dados limpos! 🗑️');
+                location.reload();
+            }
+        }
+
+        // UTILITÁRIOS
+        function formatarMoeda(valor) {
+            return 'R$ ' + valor.toFixed(2).replace('.', ',');
+        }
+
+        function showToast(mensagem, tipo = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = mensagem;
+            toast.className = 'toast show ' + (tipo === 'error' ? 'error' : tipo === 'warning' ? 'warning' : '');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
